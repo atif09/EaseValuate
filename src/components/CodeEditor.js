@@ -34,35 +34,48 @@ const defaultHtml = `<!DOCTYPE html>
 </body>
 </html>`;
 
-const CodeEditor = ({ theme, onCodeChange }) => {
-  const [code, setCode] = useState(defaultHtml);
-
+const CodeEditor = ({ theme = 'dark', value, onChange, onAnalyze }) => {
   return (
     <Container>
       <Header theme={theme}>HTML Editor</Header>
-      <AceEditor
-        mode="html"
-        theme={theme === 'dark' ? 'monokai' : 'github'}
-        value={code}
-        onChange={(newCode) => {
-          setCode(newCode);
-          onCodeChange?.(newCode);
-        }}
-        width="100%"
-        height="500px"
-        fontSize={14}
-        setOptions={{
-          enableBasicAutocompletion: true,
-          enableLiveAutocompletion: true,
-          enableSnippets: true,
-          showLineNumbers: true,
-          tabSize: 2,
-          useSoftTabs: true,
-          showPrintMargin: false,
-        }}
-        editorProps={{ $blockScrolling: true }}
-        aria-label="HTML code editor"
-      />
+      <div style={{ position: 'relative' }}>
+        <AceEditor
+          mode="html"
+          theme={theme === 'dark' ? 'monokai' : 'github'}
+          value={value || defaultHtml}
+          onChange={onChange}
+          width="100%"
+          height="500px"
+          fontSize={14}
+          setOptions={{
+            enableBasicAutocompletion: true,
+            enableLiveAutocompletion: true,
+            enableSnippets: true,
+            showLineNumbers: true,
+            tabSize: 2,
+            useSoftTabs: true,
+            showPrintMargin: false
+          }}
+          editorProps={{ $blockScrolling: true }}
+          aria-label="HTML code editor"
+        />
+        <button 
+          onClick={onAnalyze}
+          style={{
+            position: 'absolute',
+            top: '10px',
+            right: '10px',
+            padding: '8px 16px',
+            backgroundColor: '#4CAF50',
+            color: 'white',
+            border: 'none',
+            borderRadius: '4px',
+            cursor: 'pointer'
+          }}
+        >
+          Analyze
+        </button>
+      </div>
     </Container>
   );
 };

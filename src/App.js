@@ -35,13 +35,35 @@ const PreviewSection = styled.section`
   gap: 20px;
 `;
 
+const defaultHtml = `<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <style>
+    p {
+      text-align: center;
+      padding: 20px;
+      font-family: Arial, sans-serif;
+    }
+  </style>
+</head>
+<body>
+  <p>See the changes here</p>
+</body>
+</html>`;
+
 function App() {
-  const [code, setCode] = useState('');
+  const [code, setCode] = useState(defaultHtml);
   const [isAnalyzing, setIsAnalyzing] = useState(false);
   const [auditResults, setAuditResults] = useState(null);
+  const [theme, setTheme] = useState('dark');
 
   const handleCodeChange = (newCode) => {
     setCode(newCode);
+  };
+
+  const toggleTheme = () => {
+    setTheme(prevTheme => prevTheme === 'dark' ? 'light' : 'dark');
   };
 
   const handleAnalyze = async () => {
@@ -59,10 +81,11 @@ function App() {
 
   return (
     <AppContainer>
-      <Header />
+      <Header theme={theme} toggleTheme={toggleTheme} />
       <MainContent>
         <EditorSection>
           <CodeEditor
+            theme={theme}
             value={code}
             onChange={handleCodeChange}
             onAnalyze={handleAnalyze}
@@ -70,11 +93,11 @@ function App() {
           <AuditHistory />
         </EditorSection>
         <PreviewSection>
-          <LivePreview htmlContent={code} />
+          <LivePreview html={code} theme={theme} />
           {isAnalyzing ? (
-            <LoadingSpinner />
+            <LoadingSpinner theme={theme} />
           ) : (
-            auditResults && <AccessibilityResults results={auditResults} />
+            auditResults && <AccessibilityResults results={auditResults} theme={theme} />
           )}
         </PreviewSection>
       </MainContent>

@@ -17,7 +17,7 @@ const Header = styled.div`
 
 
 
-const Preview = ({ html, highlightedElement, onLoad }) => {
+const Preview = ({ html, highlightedElement, onLoad, theme }) => {
   const iframeRef = useRef();
 
   useEffect(() => {
@@ -27,9 +27,33 @@ const Preview = ({ html, highlightedElement, onLoad }) => {
     try {
       const doc = iframe.contentDocument;
       doc.open();
-      doc.write(html);
+      
+      // If the HTML includes a full document structure, use it directly
+      if (html.includes('<!DOCTYPE html>')) {
+        // Insert theme styles right after the first <style> tag or create one if it doesn't exist
+        const themedHtml = theme === 'dark'
+          ? html.replace('</style>', 'body { background: #1a202c; color: #f7fafc; }</style>')
+          : html;
+        doc.write(themedHtml);
+      } else {
+        // If it's just a fragment, wrap it in a proper document
+        const themeStyles = theme === 'dark' 
+          ? '<style>body { background: #1a202c; color: #f7fafc; }</style>' 
+          : '';
+        doc.write(`
+          <!DOCTYPE html>
+          <html>
+            <head>
+              <meta charset="UTF-8">
+              ${themeStyles}
+            </head>
+            <body>
+              ${html}
+            </body>
+          </html>
+        `);
+      }
       doc.close();
-
       
       if (highlightedElement) {
         const element = doc.querySelector(highlightedElement);
@@ -43,14 +67,20 @@ const Preview = ({ html, highlightedElement, onLoad }) => {
     } catch (error) {
       console.warn('Preview update failed:', error);
     }
-  }, [html, highlightedElement, onLoad]);
+  }, [html, highlightedElement, onLoad, theme]);
 
   return (
     <iframe
       ref={iframeRef}
       title="Live Preview"
-      sandbox="allow-same-origin"
-      style={{ width: '100%', height: '500px', border: 'none', background: 'white' }}
+      sandbox="allow-same-origin allow-scripts"
+      style={{ 
+        width: '100%', 
+        height: '500px', 
+        border: 'none', 
+        background: theme === 'dark' ? '#1a202c' : 'white',
+        borderRadius: '4px'
+      }}
     />
   );
 };
@@ -61,6 +91,7 @@ const LivePreview = ({ html, theme, highlightedElement, onLoad }) => (
     <Header theme={theme}>Live Preview</Header>
     <Preview 
       html={html} 
+      theme={theme}
       highlightedElement={highlightedElement}
       onLoad={onLoad}
     />
