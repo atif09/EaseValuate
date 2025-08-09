@@ -6,6 +6,7 @@
     "@axe-core/react": "^4.10.2",
     "ace-builds": "^1.43.2",
     "cra-template-pwa": "2.0.0",
+    "motion": "^12.23.12",
     "react": "^19.1.1",
     "react-ace": "^14.0.1",
     "react-dom": "^19.1.1",

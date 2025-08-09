@@ -1,65 +1,143 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import styled from 'styled-components';
-import { FaSun, FaMoon } from 'react-icons/fa';
+import { motion } from "motion/react";
 
 const HeaderContainer = styled.header`
   display: flex;
   justify-content: space-between;
   align-items: center;
   padding: 1rem 2rem;
-  background-color: ${props => props.theme === 'dark' ? '#2d3748' : '#f8f9fa'};
+  background: transparent;
+  backdrop-filter: blur(4px);
   color: ${props => props.theme === 'dark' ? '#f8f9fa' : '#2d3748'};
-  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
 `;
 
+// Logo with a typing effect
 const Logo = styled.div`
-  font-size: 1.5rem;
+  font-size: 1.6rem;
   font-weight: bold;
-  display: flex;
-  align-items: center;
-  gap: 0.5rem;
+  font-family: 'Orbitron', sans-serif;
+  background: linear-gradient(45deg, #a120ff, #202eff);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  letter-spacing: 1px;
+  position: relative;
+  white-space: nowrap; /* Prevent line breaks */
   
-  span {
-    color: #4299e1;
+  
+  /* Blinking cursor effect */
+  &::after {
+    content: '|';
+    position: absolute;
+    right: -8px;
+    color: #a120ff;
+    background: linear-gradient(45deg, #a120ff, #202eff);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    animation: blink-cursor 0.8s step-end infinite;
+  }
+
+  @keyframes blink-cursor {
+    from, to { opacity: 1; }
+    50% { opacity: 0; }
   }
 `;
 
 const ThemeToggle = styled.button`
-  background: none;
+  background: transparent;
   border: none;
-  color: ${props => props.theme === 'dark' ? '#f8f9fa' : '#2d3748'};
-  font-size: 1.2rem;
   cursor: pointer;
-  padding: 0.5rem;
-  border-radius: 50%;
+  padding: 0;
   display: flex;
-  align-items: center;
-  justify-content: center;
-  transition: background-color 0.2s;
+  transition: transform 0.2s;
   
   &:hover {
-    background-color: ${props => props.theme === 'dark' ? '#4a5568' : '#edf2f7'};
+    transform: scale(1.5);
   }
-  
+
   &:focus {
-    outline: 2px solid #4299e1;
-    outline-offset: 2px;
+    outline: none;
   }
 `;
 
+const ToggleSwitch = ({ theme }) => {
+  const circlePosition = theme === 'dark' ? 16 : 8;
+  
+  return (
+    <svg
+      xmlns="http://www.w3.org/2000/svg"
+      width={28}
+      height={28}
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke={theme === 'dark' ? '#a120ff' : '#202eff'}
+      strokeWidth={2}
+      strokeLinecap="round"
+      strokeLinejoin="round"
+    >
+      <rect 
+        width="20" 
+        height="12" 
+        x="2" 
+        y="6" 
+        rx="6" 
+        ry="6" 
+        fill={theme === 'dark' ? 'rgba(162, 32, 255, 0.2)' : 'rgba(32, 46, 255, 0.2)'} 
+      />
+      <motion.circle
+        cy="12"
+        r="2"
+        cx={8}
+        animate={{ cx: circlePosition }}
+        transition={{
+          type: "spring",
+          stiffness: 300,
+          damping: 25,
+          duration: 1.5
+        }}
+        fill={theme === 'dark' ? '#a120ff' : '#202eff'}
+      />
+    </svg>
+  );
+};
+
 const Header = ({ theme, toggleTheme }) => {
+  const [displayText, setDisplayText] = useState('');
+  const [typingComplete, setTypingComplete] = useState(false);
+  const fullText = 'EaseValuate';
+
+  useEffect(() => {
+    
+    setDisplayText('');
+    setTypingComplete(false);
+    
+    let currentIndex = 0;
+    const typingInterval = setInterval(() => {
+      if (currentIndex < fullText.length) {
+        setDisplayText(fullText.substring(0, currentIndex + 1));
+        currentIndex++;
+      } else {
+        setTypingComplete(true);
+        clearInterval(typingInterval);
+      }
+    }, 200); 
+    
+    return () => clearInterval(typingInterval);
+  }, []);
+
   return (
     <HeaderContainer theme={theme}>
-      <Logo>
-        <span></span>
-        EaseValuate
+      <Logo style={{ 
+        // Only show cursor when typing is not complete
+        '&::after': typingComplete ? { display: 'none' } : {} 
+      }}>
+        {displayText}
       </Logo>
       <ThemeToggle 
         onClick={toggleTheme} 
-        theme={theme}
         aria-label={theme === 'dark' ? 'Switch to light mode' : 'Switch to dark mode'}
       >
-        {theme === 'dark' ? <FaSun /> : <FaMoon />}
+        <ToggleSwitch theme={theme} />
       </ThemeToggle>
     </HeaderContainer>
   );

@@ -28,15 +28,15 @@ const Preview = ({ html, highlightedElement, onLoad, theme }) => {
       const doc = iframe.contentDocument;
       doc.open();
       
-      // If the HTML includes a full document structure, use it directly
+      
       if (html.includes('<!DOCTYPE html>')) {
-        // Insert theme styles right after the first <style> tag or create one if it doesn't exist
+        
         const themedHtml = theme === 'dark'
           ? html.replace('</style>', 'body { background: #1a202c; color: #f7fafc; }</style>')
           : html;
         doc.write(themedHtml);
       } else {
-        // If it's just a fragment, wrap it in a proper document
+        
         const themeStyles = theme === 'dark' 
           ? '<style>body { background: #1a202c; color: #f7fafc; }</style>' 
           : '';
