@@ -6,12 +6,13 @@ import LivePreview from './components/LivePreview';
 import AccessibilityResults from './components/AccessibilityResults';
 import LoadingSpinner from './components/LoadingSpinner';
 import AuditHistory from './components/AuditHistory';
+import GlobalStyles from './styles/globalStyles';
+import BackgroundEffect from './components/BackgroundEffect';
 
 const AppContainer = styled.div`
   display: flex;
   flex-direction: column;
   min-height: 100vh;
-  background-color: #1e1e1e;
   color: #ffffff;
 `;
 
@@ -62,6 +63,8 @@ function App() {
     setCode(newCode);
   };
 
+
+  
   const toggleTheme = () => {
     setTheme(prevTheme => prevTheme === 'dark' ? 'light' : 'dark');
   };
@@ -80,7 +83,10 @@ function App() {
   };
 
   return (
-    <AppContainer>
+    <>
+    <GlobalStyles />
+    <BackgroundEffect />
+    <AppContainer className="app-container">
       <Header theme={theme} toggleTheme={toggleTheme} />
       <MainContent>
         <EditorSection>
@@ -102,6 +108,7 @@ function App() {
         </PreviewSection>
       </MainContent>
     </AppContainer>
+    </>
   );
 }
 

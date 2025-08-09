@@ -56,7 +56,8 @@ const CodeEditor = ({ theme = 'dark', value, onChange, onAnalyze }) => {
             showLineNumbers: true,
             tabSize: 2,
             useSoftTabs: true,
-            showPrintMargin: false
+            showPrintMargin: false,
+            useWorker: false
           }}
           editorProps={{ $blockScrolling: true }}
           aria-label="HTML code editor"
