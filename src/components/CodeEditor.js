@@ -1,13 +1,16 @@
-import React from 'react';
+import React, {useState} from 'react';
 import AceEditor from 'react-ace';
 import styled from 'styled-components';
 import { motion,useAnimation} from 'framer-motion';
+import { supportedLanguages } from '../config/languages';
 // Required imports for Ace
 import ace from 'ace-builds';
 import 'ace-builds/webpack-resolver';
 import 'ace-builds/src-noconflict/mode-html';
 import 'ace-builds/src-noconflict/theme-monokai';
 import 'ace-builds/src-noconflict/ext-language_tools';
+import 'ace-builds/src-noconflict/mode-javascript';
+import 'ace-builds/src-noconflict/mode-python';
 
 
  window.ace = ace;
@@ -33,9 +36,14 @@ const Header = styled.div`
 
 `;
 
-const AnimatedCode = () => {
+const AnimatedCode = ({onLanguageChange}) => {
   const controls = useAnimation();
+  const [showDropdown, setShowDropdown] = useState(false);
+
   return (
+    <IconWrapper 
+      onMouseEnter={() => setShowDropdown(true)}
+      onMouseLeave={() => setShowDropdown(false)}>
     <div
       style={{
         cursor: "pointer",
@@ -81,6 +89,21 @@ const AnimatedCode = () => {
         />
       </svg>
     </div>
+    <LanguageDropdown isVisible = {showDropdown}>
+      {Object.entries(supportedLanguages).map(([key,lang]) => (
+        <LanguageOption
+        key={key}
+        onClick={() => {
+          
+          onLanguageChange(key);
+          setShowDropdown(false);
+          
+        }}>
+          {lang.name}
+        </LanguageOption>
+      ))}
+    </LanguageDropdown>
+    </IconWrapper>
   );
 };
 
@@ -142,6 +165,34 @@ const AnalyzeButton = styled.button`
   }
 `;
 
+const LanguageDropdown = styled.div`
+  position: absolute;
+  top:100%;
+  left:0%;
+  background: rgba(86, 32, 155,0.25);
+  backdrop-filter: blur(4px);
+  border: 1px solid rgba(162,32,255,0.15);
+  border-radius: 4px;
+  min-width: 120px;
+  display: ${props => props.isVisible ? 'block' : 'none'};
+  z-index:1000;`;
+
+
+const LanguageOption = styled.div`
+  padding: 8px 12px;
+  color: white;
+  font-family: Arial, sans-serif;
+  cursor: pointer;
+  transition: background 0.2s;
+  
+  &:hover {
+  background: rgba(162,32,255,0.2);
+  }`;
+
+  const IconWrapper = styled.div`
+    position: relative;
+    display: inline-block;`;
+
 
 
 
@@ -175,10 +226,16 @@ const defaultHtml = `<!DOCTYPE html>
 </html>`;
 
 const CodeEditor = ({ value, onChange, onAnalyze }) => {
+  const [currentLanguage, setCurrentLanguage]=useState('html');
+
+  const handleLanguageChange=(language) => {
+    setCurrentLanguage(language);
+    onChange(supportedLanguages[language].defaultTemplate);
+  };
   return (
     <Container>
       <Header>
-        <AnimatedCode />
+        <AnimatedCode onLanguageChange={handleLanguageChange} />
         <AnalyzeButton onClick={onAnalyze}>
           Analyze
         </AnalyzeButton>
@@ -186,8 +243,10 @@ const CodeEditor = ({ value, onChange, onAnalyze }) => {
       <EditorWrapper>
         <div style={{ position: 'relative' }}>
           <AceEditor
-            mode="html"
-            theme="monokai"
+
+
+            mode={supportedLanguages[currentLanguage]?.mode || 'html' }
+            theme="monokai" 
             value={value || defaultHtml}
             onChange={onChange}
             width="100%"
