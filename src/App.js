@@ -31,11 +31,35 @@ const EditorSection = styled.section`
   gap: 20px;
 `;
 
+
 const PreviewSection = styled.section`
-  display: flex;
-  flex-direction: column;
-  gap: 20px;
-`;
+  flex: 1;
+  margin: 1rem;
+  border-radius: 8px;
+  overflow: hidden;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+  backdrop-filter: blur(2px);
+  border: 1px solid rgba(162, 32, 255, 0.12);
+  background: rgba(17, 25, 40, 0.15);
+
+  .preview-header {
+    padding: 0.75rem;
+    background: transparent;
+    border-bottom: 1px solid rgba(162, 32, 255, 0.25);
+    
+  }
+
+  .preview-content {
+    background: transparent !important;
+    height: calc(100% - 40px);
+  }
+
+  iframe {
+    width: 100%;
+    height: 100%;
+    border: none;
+    background: transparent !important;
+  }`;
 
 const defaultHtml = `<!DOCTYPE html>
 <html lang="en">
@@ -85,6 +109,7 @@ function App() {
 
   return (
     <>
+    
     <GlobalStyles />
     <BackgroundEffect />
     <AppContainer className="app-container">
