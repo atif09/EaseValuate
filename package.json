@@ -4,6 +4,7 @@
   "private": true,
   "dependencies": {
     "@axe-core/react": "^4.10.2",
+    "@types/ace": "^0.0.52",
     "ace-builds": "^1.43.2",
     "cra-template-pwa": "2.0.0",
     "framer-motion": "^12.23.12",
