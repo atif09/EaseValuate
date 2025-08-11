@@ -12,8 +12,13 @@ import 'ace-builds/src-noconflict/ext-language_tools';
 import 'ace-builds/src-noconflict/mode-javascript';
 import 'ace-builds/src-noconflict/mode-python';
 
+const languageSettings = {
+  html: {tabSize: 2, useSoftTabs: true, showInvisibles: true},
+  javascript: {tabSize: 4, useSoftTabs: true, showInvisibles: true},
+  python: { tabSize:4,useSoftTabs: true, showInvisibles: true}
+};
 
- window.ace = ace;
+window.ace = ace;
 
 const Container = styled.div`
   margin: 1rem;
@@ -36,9 +41,21 @@ const Header = styled.div`
 
 `;
 
-const AnimatedCode = ({onLanguageChange}) => {
+const AnimatedCode = ({ErrorMessage,onLanguageChange}) => {
   const controls = useAnimation();
   const [showDropdown, setShowDropdown] = useState(false);
+  const [error, setError] = useState(null);
+
+  const handleLanguageSelect = (language) => {
+    try {
+      onLanguageChange(language);
+      setShowDropdown(false);
+      setError(null);
+    }catch (err) {
+      setError(err.message);
+      console.error('Language switch failed:',err)
+    }
+  };
 
   return (
     <IconWrapper 
@@ -93,16 +110,12 @@ const AnimatedCode = ({onLanguageChange}) => {
       {Object.entries(supportedLanguages).map(([key,lang]) => (
         <LanguageOption
         key={key}
-        onClick={() => {
-          
-          onLanguageChange(key);
-          setShowDropdown(false);
-          
-        }}>
+        onClick={() => handleLanguageSelect(key)}>
           {lang.name}
         </LanguageOption>
       ))}
     </LanguageDropdown>
+    {error && <ErrorMessage>{error}</ErrorMessage>}
     </IconWrapper>
   );
 };
@@ -227,10 +240,19 @@ const defaultHtml = `<!DOCTYPE html>
 
 const CodeEditor = ({ value, onChange, onAnalyze }) => {
   const [currentLanguage, setCurrentLanguage]=useState('html');
+  const [editorError, setEditorError] = useState(null);
 
   const handleLanguageChange=(language) => {
-    setCurrentLanguage(language);
-    onChange(supportedLanguages[language].defaultTemplate);
+    try{
+      if(!supportedLanguages[language]){
+        throw new Error(`Unsupported language: ${language}`);
+      
+      }
+      setCurrentLanguage(language);
+      onChange(supportedLanguages[language].defaultTemplate);
+    } catch (error) {
+      console.error('Language switch failed: ',error);
+    }
   };
   return (
     <Container>
@@ -247,7 +269,7 @@ const CodeEditor = ({ value, onChange, onAnalyze }) => {
 
             mode={supportedLanguages[currentLanguage]?.mode || 'html' }
             theme="monokai" 
-            value={value || defaultHtml}
+            value={value || supportedLanguages[currentLanguage]?.defaultTemplate}
             onChange={onChange}
             width="100%"
             height="500px"
@@ -260,6 +282,7 @@ const CodeEditor = ({ value, onChange, onAnalyze }) => {
               background: 'transparent'
             }}
             setOptions={{
+              ...languageSettings[currentLanguage],
               useWorker: false,
               enableBasicAutocompletion: true,
               enableLiveAutocompletion: true,

@@ -79,6 +79,7 @@ const defaultHtml = `<!DOCTYPE html>
 </html>`;
 
 function App() {
+  const [currentLanguage, setCurrentLanguage] = useState('html');
   const [code, setCode] = useState(defaultHtml);
   const [isAnalyzing, setIsAnalyzing] = useState(false);
   const [auditResults, setAuditResults] = useState(null);
@@ -125,7 +126,7 @@ function App() {
           <AuditHistory />
         </EditorSection>
         <PreviewSection>
-          <LivePreview html={code} theme={theme} />
+          <LivePreview content={code} language ={currentLanguage} theme={theme} />
           {isAnalyzing ? (
             <LoadingSpinner theme={theme} />
           ) : (
