@@ -4,11 +4,9 @@ import styled from 'styled-components';
 import Header from './components/Header';
 import CodeEditor from './components/CodeEditor';
 import LivePreview from './components/LivePreview';
-import AccessibilityResults from './components/AccessibilityResults';
-import LoadingSpinner from './components/LoadingSpinner';
-import AuditHistory from './components/AuditHistory';
 import GlobalStyles from './styles/globalStyles';
 import BackgroundEffect from './components/BackgroundEffect';
+import { supportedLanguages} from './config/languages';
 
 const AppContainer = styled.div`
   display: flex;
@@ -81,32 +79,16 @@ const defaultHtml = `<!DOCTYPE html>
 function App() {
   const [currentLanguage, setCurrentLanguage] = useState('html');
   const [code, setCode] = useState(defaultHtml);
-  const [isAnalyzing, setIsAnalyzing] = useState(false);
-  const [auditResults, setAuditResults] = useState(null);
-  const [theme, setTheme] = useState('dark');
 
   const handleCodeChange = (newCode) => {
     setCode(newCode);
   };
 
-
-  
-  const toggleTheme = () => {
-    setTheme(prevTheme => prevTheme === 'dark' ? 'light' : 'dark');
+  const handleLanguageChange=(newLanguage)=>{
+    setCurrentLanguage(newLanguage);
+    setCode(supportedLanguages[newLanguage]?.defaultTemplate||'');
   };
 
-  const handleAnalyze = async () => {
-    setIsAnalyzing(true);
-    
-    setTimeout(() => {
-      setAuditResults({
-        violations: [],
-        passes: [],
-        incomplete: []
-      });
-      setIsAnalyzing(false);
-    }, 1500);
-  };
 
   return (
     <>
@@ -114,24 +96,18 @@ function App() {
     <GlobalStyles />
     <BackgroundEffect />
     <AppContainer className="app-container">
-      <Header theme={theme} toggleTheme={toggleTheme} />
+      <Header />
       <MainContent>
         <EditorSection>
           <CodeEditor
-            theme={theme}
             value={code}
             onChange={handleCodeChange}
-            onAnalyze={handleAnalyze}
+            currentLanguage={currentLanguage}
+            onLanguageChange={handleLanguageChange}
           />
-          <AuditHistory />
         </EditorSection>
         <PreviewSection>
-          <LivePreview content={code} language ={currentLanguage} theme={theme} />
-          {isAnalyzing ? (
-            <LoadingSpinner theme={theme} />
-          ) : (
-            auditResults && <AccessibilityResults results={auditResults} theme={theme} />
-          )}
+          <LivePreview content={code} language ={currentLanguage} />
         </PreviewSection>
       </MainContent>
     </AppContainer>

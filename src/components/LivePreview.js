@@ -2,6 +2,7 @@ import React, { useState,useRef, useEffect } from 'react';
 import styled from 'styled-components';
 import { motion } from 'framer-motion';
 import PreviewIcon from '../icons/PreviewIcon';
+import { htmlErrorHandler, javascriptErrorHandler, pythonErrorHandler} from '../utils/errorHandlers';
 
 const Container = styled.div`
   margin: 1rem;
@@ -51,6 +52,8 @@ const ErrorMessage = styled.div`
   font-family: 'Monaco', 'Menlo', monospace;
   font-size: 14px;
   white-space: pre-wrap;
+  border-raius: 4px;
+  box-shadow: 0 2px 4px rgba( 255,0,0,0.1);
 `;
 
 const IconWrapper = styled.div`
@@ -71,60 +74,81 @@ const Preview = ({highlightedElement, content, language, onLoad}) => {
   useEffect(() => {
     if (!content){
       setOutput('');
+      setError('Please enter some code to preview')
       return;
     }
 
-    if(language==='html'){
-      const iframe = iframeRef.current;
-      if (!iframe) return;
+    setError(null);
 
-    try {
-      const doc = iframe.contentDocument || iframe.contentWindow.document;
-      doc.open();
-
-      const htmlContent =`
-
-      <!DOCTYPE html>
-      <html>
-        <head>
-          <meta charset="UTF-8">
-          <style>
-            body{
-              background: transparent !important;
-              color: white !important;
-              font-family: Arial, sans-serif;
-              margin: 0;
-              padding: 20px;
-            }
-              *{color: rgba(255, 255, 255, 0.9) !important;
-                text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.1;}
-            h1,h2,h3,h4,h5,h6, p{
-            margin-bottom: 1rem;}
-          </style>
-        </head>
-        <body>
-          ${content}
-        </body>
-      </html>
-    `;
-      doc.write(htmlContent);
-      doc.close();
-      
-      if (highlightedElement) {
-      const element = doc.querySelector(highlightedElement);
-      if (element) {
-        element.style.outline = '2px solid #4299e1';
-        element.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    let errorMessage = null;
+    switch(language) {
+      case 'html':
+        errorMessage = htmlErrorHandler(content);
+        if(errorMessage){
+          setError(errorMessage);
+          return;
         }
+    
+
+    
+        const iframe = iframeRef.current;
+        if (!iframe) return;
+
+        try {
+          const doc = iframe.contentDocument || iframe.contentWindow.document;
+          doc.open();
+
+          const htmlContent =`
+
+          <!DOCTYPE html>
+          <html>
+            <head>
+              <meta charset="UTF-8">
+              <style>
+                body{
+                  background: transparent !important;
+                  color: white !important;
+                  font-family: Arial, sans-serif;
+                  margin: 0;
+                  padding: 20px;
+                }
+                  *{color: rgba(255, 255, 255, 0.9) !important;
+                    text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.1;}
+                h1,h2,h3,h4,h5,h6, p{
+                margin-bottom: 1rem;}
+              </style>
+            </head>
+            <body>
+              ${content}
+            </body>
+          </html>
+        `;
+          doc.write(htmlContent);
+          doc.close();
+      
+        if (highlightedElement) {
+        const element = doc.querySelector(highlightedElement);
+        if (element) {
+          element.style.outline = '2px solid #4299e1';
+          element.scrollIntoView({ behavior: 'smooth', block: 'center' });
+          }
+        }
+        setError(null);
+        onLoad?.();
+      }catch (error){
+        setError(`HTML Error: ${error.message}`);
+        console.error('Preview failed:',error);
       }
-      setError(null);
-      onLoad?.();
-    }catch (error){
-      setError(`${language.toUpperCase()} Error: ${error.message}`);
-      console.error('Preview failed:',error);
-    }
-    }else if(language === 'javascript'){
+      break;
+    case 'javascript':
+      const jsError = javascriptErrorHandler(content);
+      if(jsError){
+        setError(jsError);
+        return;
+      }
+    
       try{
+
         const results =[];
         const originalLog = console.log;
         console.log = (...args) => {
@@ -132,26 +156,46 @@ const Preview = ({highlightedElement, content, language, onLoad}) => {
           originalLog.apply(console,args);
         };
 
-        eval(content);
+        eval(`try{${content}} catch(e){throw e;}`);;
         console.log=originalLog;
 
-        setOutput(results.join('\n') || 'No output');
-        setError(null);
+        setOutput(results.join('\n') || 'Code executed successfully, but no output');
       } catch(error){
-        setError(error.message);
+        setError(`JavaScript Error: ${error.message}`);
         setOutput('');
       }
-    } else if(language === 'python'){
+      break;
+    case 'python':
+      const pythonError = pythonErrorHandler(content);
+      if (pythonError) {
+        setError(pythonError);
+        return;
+      }
+
       setOutput('Python output is loading...');
-      setError(null);
-    }
-  }, [content,language, onLoad]);
+      break;
+
+    default:
+      setError('Unsupported Language');
+  }
+    
+}, [content,language, onLoad, highlightedElement]);
     
 
 
   const renderPreview=() => {
     if (error){
-      return <ErrorMessage>{error}</ErrorMessage>;
+      return ( <ErrorMessage>
+        <div style ={{fontWeight: 'bold', marginBottom: '0.5rem'}}>
+          {error}
+          </div>
+          {language==='javascript' && (
+            <div style={{fontSize: '12px', opacity: 0.8}}>
+              Check your browser console for more clarity on the error.
+            </div>
+          )}
+      </ErrorMessage>
+      );
     }
     switch(language){
       case'html':
@@ -164,6 +208,7 @@ const Preview = ({highlightedElement, content, language, onLoad}) => {
             width: '100%', 
             height: '500px', 
             border: 'none', 
+            background: 'transparent',
             borderRadius: '4px'
       }}
     />
@@ -171,7 +216,7 @@ const Preview = ({highlightedElement, content, language, onLoad}) => {
 
   case 'javascript': 
   case 'python':
-    return <ConsoleOutput>{output}</ConsoleOutput>;
+    return <ConsoleOutput>{output || 'No output yet...'}</ConsoleOutput>;
   default:
     return<div>Preview not available for this language</div>  
 }

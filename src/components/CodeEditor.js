@@ -238,8 +238,7 @@ const defaultHtml = `<!DOCTYPE html>
 </body>
 </html>`;
 
-const CodeEditor = ({ value, onChange, onAnalyze }) => {
-  const [currentLanguage, setCurrentLanguage]=useState('html');
+const CodeEditor = ({ value, onChange, onAnalyze,currentLanguage,onLanguageChange }) => {
   const [editorError, setEditorError] = useState(null);
 
   const handleLanguageChange=(language) => {
@@ -248,8 +247,7 @@ const CodeEditor = ({ value, onChange, onAnalyze }) => {
         throw new Error(`Unsupported language: ${language}`);
       
       }
-      setCurrentLanguage(language);
-      onChange(supportedLanguages[language].defaultTemplate);
+      onLanguageChange(language);
     } catch (error) {
       console.error('Language switch failed: ',error);
     }
