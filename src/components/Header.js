@@ -18,25 +18,26 @@ const Logo = styled.div`
   -webkit-text-fill-color: transparent;
   letter-spacing: 1px;
   position: relative;
+  display: inline-block;
   white-space: nowrap; /* Prevent line breaks */
-  
-  
-  /* Blinking cursor effect */
-  &::after {
-    content: '|';
-    position: absolute;
-    right: -8px;
-    color: #a120ff;
-    background: linear-gradient(45deg, #a120ff, #202eff);
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
-    animation: blink-cursor 0.8s step-end infinite;
-  }
+`;
 
-  @keyframes blink-cursor {
-    from, to { opacity: 1; }
-    50% { opacity: 0; }
-  }
+const Cursor = styled.span`
+  color: #a120ff;
+  background: linear-gradient(45deg,#a120ff, #202eff);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  animation: blink-cursor 0.8s step-end infinite;
+  display: inline-block;
+  font-size:2rem;
+  font-weight:300;
+  margin-left:2px;
+  position:relative;
+  top: -2px;
+
+  @keyframes blink-cursor{
+  from,to{opacity: 1;}
+  50%{opacity:0;}}
 `;
 
 
@@ -67,12 +68,12 @@ const Header = () => {
 
   return (
     <HeaderContainer>
-      <Logo style={{ 
-        // Only show cursor when typing is not complete
-        '&::after': typingComplete ? { display: 'none' } : {} 
-      }}>
-        {displayText}
-      </Logo>
+      <div style={{ display: 'inline-flex', alignItems: 'center' }}>
+        <Logo>
+          {displayText}
+        </Logo>
+        {!typingComplete && <Cursor>|</Cursor>}
+      </div>
     </HeaderContainer>
   );
 };
