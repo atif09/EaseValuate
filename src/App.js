@@ -6,7 +6,7 @@ import CodeEditor from './components/CodeEditor';
 import LivePreview from './components/LivePreview';
 import GlobalStyles from './styles/globalStyles';
 import BackgroundEffect from './components/BackgroundEffect';
-import { supportedLanguages} from './config/languages';
+import { supportedLanguages } from './config/languages';
 
 const AppContainer = styled.div`
   display: flex;
@@ -29,7 +29,6 @@ const EditorSection = styled.section`
   gap: 20px;
 `;
 
-
 const PreviewSection = styled.section`
   flex: 1;
   margin: 1rem;
@@ -44,7 +43,6 @@ const PreviewSection = styled.section`
     padding: 0.75rem;
     background: transparent;
     border-bottom: 1px solid rgba(162, 32, 255, 0.25);
-    
   }
 
   .preview-content {
@@ -57,60 +55,42 @@ const PreviewSection = styled.section`
     height: 100%;
     border: none;
     background: transparent !important;
-  }`;
-
-const defaultHtml = `<!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="UTF-8">
-  <style>
-    p {
-      text-align: center;
-      padding: 20px;
-      font-family: Arial, sans-serif;
-    }
-  </style>
-</head>
-<body>
-  <p>See the changes here</p>
-</body>
-</html>`;
+  }
+`;
 
 function App() {
   const [currentLanguage, setCurrentLanguage] = useState('html');
-  const [code, setCode] = useState(defaultHtml);
+  const [code, setCode] = useState(supportedLanguages['html'].defaultTemplate);
 
   const handleCodeChange = (newCode) => {
     setCode(newCode);
   };
 
-  const handleLanguageChange=(newLanguage)=>{
+  const handleLanguageChange = (newLanguage) => {
     setCurrentLanguage(newLanguage);
-    setCode(supportedLanguages[newLanguage]?.defaultTemplate||'');
+    setCode(supportedLanguages[newLanguage]?.defaultTemplate || '');
   };
-
 
   return (
     <>
-    
-    <GlobalStyles />
-    <BackgroundEffect />
-    <AppContainer className="app-container">
-      <Header />
-      <MainContent>
-        <EditorSection>
-          <CodeEditor
-            value={code}
-            onChange={handleCodeChange}
-            currentLanguage={currentLanguage}
-            onLanguageChange={handleLanguageChange}
-          />
-        </EditorSection>
-        <PreviewSection>
-          <LivePreview content={code} language ={currentLanguage} />
-        </PreviewSection>
-      </MainContent>
-    </AppContainer>
+      <GlobalStyles />
+      <BackgroundEffect />
+      <AppContainer className="app-container">
+        <Header />
+        <MainContent>
+          <EditorSection>
+            <CodeEditor
+              value={code}
+              onChange={handleCodeChange}
+              currentLanguage={currentLanguage}
+              onLanguageChange={handleLanguageChange}
+            />
+          </EditorSection>
+          <PreviewSection>
+            <LivePreview content={code} language={currentLanguage} />
+          </PreviewSection>
+        </MainContent>
+      </AppContainer>
     </>
   );
 }

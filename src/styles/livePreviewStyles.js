@@ -16,16 +16,6 @@ export const Header = styled.div`
   align-items:center;
 `;
 
-export const ConsoleOutput = styled.pre`
-  color: rgba(255,255,255,0.9);
-  padding: 1rem;
-  margin: 0;
-  font-family: 'Monaco', 'Menlo', monospace;
-  font-size:14px;
-  line-height: 1.5;
-  background: transparent;
-`;
-
 export const PreviewContainer = styled.div`
   background: rgba(17, 25, 40, 0.15);
   min-height: 200px;
@@ -39,17 +29,18 @@ export const PreviewContainer = styled.div`
 
 `;
 
-export const ErrorMessage = styled.div`
-  color: #ff4444;
-  padding: 1rem;
-  background: rgba(255, 68, 68, 0.1);
-  border-left: 3px solid #ff4444;
+export const ErrorDisplay = styled.div`
+  color: :#ff4444;
+  padding:1rem;
+  background-color: rgba(255, 0, 0, 0.1);
+  border-left: 4px solid #ff4444;
   margin: 1rem;
-  font-family: 'Monaco', 'Menlo', monospace;
+  font-family: 'Consolas', monospace;
   font-size: 14px;
   white-space: pre-wrap;
-  border-raius: 4px;
-  box-shadow: 0 2px 4px rgba( 255,0,0,0.1);
+  word-break: break-word;
+  border-raius: 0 4px 4px 0;;
+  line-height: 1.5;
 `;
 
 export const IconWrapper = styled.div`

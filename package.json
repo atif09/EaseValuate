@@ -4,18 +4,18 @@
   "private": true,
   "dependencies": {
     "@axe-core/react": "^4.10.2",
+    "@codemirror/lang-html": "^6.4.9",
+    "@codemirror/lang-javascript": "^6.2.4",
+    "@codemirror/lint": "^6.8.5",
     "@types/ace": "^0.0.52",
     "ace-builds": "^1.43.2",
     "acorn": "^8.15.0",
+    "codemirror": "^6.0.2",
     "cra-template-pwa": "2.0.0",
-    "eslint": "^8.57.1",
     "esprima": "^4.0.1",
     "framer-motion": "^12.23.12",
-    "html-validator": "^6.0.1",
-    "html5-validator": "^1.2.1",
     "motion": "^12.23.12",
-    "pyright": "^1.1.403",
-    "python-shell": "^5.0.0",
+    "prettier": "^3.6.2",
     "react": "^19.1.1",
     "react-ace": "^14.0.1",
     "react-dom": "^19.1.1",
@@ -51,5 +51,8 @@
       "last 1 firefox version",
       "last 1 safari version"
     ]
+  },
+  "devDependencies": {
+    "worker-loader": "^3.0.8"
   }
 }

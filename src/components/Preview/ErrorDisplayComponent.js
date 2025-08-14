@@ -1,8 +1,8 @@
 import React from 'react';
-import { ErrorMessage } from '../../styles/livePreviewStyles';
+import { ErrorDisplay } from '../../styles/livePreviewStyles';
 
-const ErrorDisplay = ({ error, language }) => (
-  <ErrorMessage>
+const ErrorDisplayComponent = ({ error, language }) => (
+  <ErrorDisplay>
     <div style={{ fontWeight: 'bold', marginBottom: '0.5rem' }}>
       {error}
     </div>
@@ -11,7 +11,7 @@ const ErrorDisplay = ({ error, language }) => (
         Check your browser console for more clarity on the error.
       </div>
     )}
-  </ErrorMessage>
+  </ErrorDisplay>
 );
 
-export default ErrorDisplay;
+export default ErrorDisplayComponent;

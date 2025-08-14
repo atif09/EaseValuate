@@ -1,5 +1,6 @@
 export const supportedLanguages = {
   html: {
+  
     name: 'HTML',
     mode: 'html',
     defaultTemplate: `<!DOCTYPE html>
@@ -21,18 +22,20 @@ export const supportedLanguages = {
     preview: 'iframe'
   },
   javascript: {
+
     name: 'JavaScript',
     mode: 'javascript',
     defaultTemplate: `// Write your JavaScript code here
 console.log("Hello World");`,
-    preview: 'console'
+    
   },
   python: {
+
     name: 'Python',
     mode: 'python',
     defaultTemplate: `# Write your Python code here
 print("Hello World")`,
-    preview: 'output'
+    
   }
 };
 
