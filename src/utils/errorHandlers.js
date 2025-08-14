@@ -1,6 +1,5 @@
 
 export const htmlErrorHandler = (content) => {
-  if (!content) return null;
 
   try{
     const parser = new DOMParser();
@@ -10,22 +9,8 @@ export const htmlErrorHandler = (content) => {
       return `HTML Error: ${errors[0].textContent}`;
     }
     return null;
-  } catch (error) {
-    return `HTML Error: ${error.message}`;
+  } catch (e) {
+    return e.message;
   }
 };
 
-export const pythonErrorHandler = (content) => {
-  if (!content) return null;
-  const rules = [
-    { pattern: /^[ ]{1,3}[^ ]/m, message: 'Invalid indentation (use 4 spaces)' },
-    { pattern: /print [^(]/, message: 'print() requires parentheses in Python 3' },
-    { pattern: /([^=!<>])(=)([^=])/, message: 'Single = used for comparison instead of ==' }
-  ];
-  for (const rule of rules) {
-    if (rule.pattern.test(content)) {
-      return `Python Error: ${rule.message}`;
-    }
-  }
-  return null;
-};

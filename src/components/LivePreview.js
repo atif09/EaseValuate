@@ -2,9 +2,8 @@ import React, { useState, useEffect, useRef } from 'react';
 import { Container, Header, PreviewContainer } from '../styles/livePreviewStyles';
 import PreviewIcon from '../icons/PreviewIcon';
 import ErrorDisplayComponent from './Preview/ErrorDisplayComponent';
-import { htmlErrorHandler, pythonErrorHandler } from '../utils/errorHandlers';
+import { htmlErrorHandler } from '../utils/errorHandlers';
 
-//helper cuz importing it directly was causing errors ---
 function createJsWorker() {
   const code = `
     self.onmessage = function (e) {
@@ -27,67 +26,125 @@ function createJsWorker() {
   const blob = new Blob([code], { type: 'application/javascript' });
   return new Worker(URL.createObjectURL(blob));
 }
-// --- END: Helper ---
+
+function createPythonWorker() {
+  const workerCodeUrl = `${process.env.PUBLIC_URL}/pythonWorker.js`;
+  return fetch(workerCodeUrl)
+    .then(response => response.text())
+    .then(code => {
+      const blob = new Blob([code], { type: 'application/javascript' });
+      return new Worker(URL.createObjectURL(blob));
+    });
+}
 
 const LivePreview = ({ content, language }) => {
-
   const [error, setError] = useState(null);
-
   const [output, setOutput] = useState('');
-
-  const workerRef = useRef(null);
+  const jsWorkerRef = useRef(null);
+  const pythonWorkerRef = useRef(null);
+  const timeoutRef = useRef(null);
 
   useEffect(() => {
-
-    if(language === 'javascript'){
-
-      if(workerRef.current){
-        workerRef.current.terminate();
+    return () => {
+      clearTimeout(timeoutRef.current);
+      if (jsWorkerRef.current) {
+        jsWorkerRef.current.terminate();
+        jsWorkerRef.current = null;
       }
-      workerRef.current =  createJsWorker();
+      if (pythonWorkerRef.current) {
+        pythonWorkerRef.current.terminate();
+        pythonWorkerRef.current = null;
+      }
+    };
+  }, []);
 
-      workerRef.current.onmessage = (e) => {
-        clearTimeout(timeoutId);
-        setError(e.data.error ? `JavaScript Error: ${e.data.error}`: null);
+  useEffect(() => {
+    clearTimeout(timeoutRef.current);
+    setError(null);
+    setOutput('');
+
+    if (language === 'javascript') {
+      if (pythonWorkerRef.current) {
+        pythonWorkerRef.current.terminate();
+        pythonWorkerRef.current = null;
+      }
+      if (jsWorkerRef.current) {
+        jsWorkerRef.current.terminate();
+      }
+      jsWorkerRef.current = createJsWorker();
+
+      jsWorkerRef.current.onmessage = (e) => {
+        clearTimeout(timeoutRef.current);
+        setError(e.data.error ? `JavaScript Error: ${e.data.error}` : null);
         setOutput(e.data.result || '');
       };
 
-      const timeoutId = setTimeout(() => {
+      timeoutRef.current = setTimeout(() => {
         setError('JavaScript Error: Execution timed out (possible infinite loop).');
         setOutput('');
-        if(workerRef.current){
-          workerRef.current.terminate();
-          workerRef.current = null;
+        if (jsWorkerRef.current) {
+          jsWorkerRef.current.terminate();
+          jsWorkerRef.current = null;
         }
-      },1500);
+      }, 1500);
 
-      workerRef.current.postMessage(content);
+      jsWorkerRef.current.postMessage(content);
 
       return () => {
-        clearTimeout(timeoutId);
-        if(workerRef.current){
-          workerRef.current.terminate();
-          workerRef.current = null;
+        clearTimeout(timeoutRef.current);
+        if (jsWorkerRef.current) {
+          jsWorkerRef.current.terminate();
+          jsWorkerRef.current = null;
         }
       };
-    }else if(language === 'html'){
+    } else if (language === 'python') {
+      if (jsWorkerRef.current) {
+        jsWorkerRef.current.terminate();
+        jsWorkerRef.current = null;
+      }
+      if (!pythonWorkerRef.current) {
+        createPythonWorker().then(worker => {
+          pythonWorkerRef.current = worker;
+          setupAndSend();
+        });
+      } else {
+        setupAndSend();
+      }
+
+      function setupAndSend() {
+        pythonWorkerRef.current.onmessage = (e) => {
+          clearTimeout(timeoutRef.current);
+          setError(e.data.error ? `Python Error: ${e.data.error}` : null);
+          setOutput(e.data.result || '');
+        };
+
+        timeoutRef.current = setTimeout(() => {
+          setError('Python Error: Execution timed out (possible infinite loop / heavy computation / Pyodide is still loading).');
+          setOutput('');
+        }, 15000);
+
+        pythonWorkerRef.current.postMessage(content);
+      }
+
+      return () => {
+        clearTimeout(timeoutRef.current);
+      };
+    } else if (language === 'html') {
+      if (jsWorkerRef.current) {
+        jsWorkerRef.current.terminate();
+        jsWorkerRef.current = null;
+      }
+      if (pythonWorkerRef.current) {
+        pythonWorkerRef.current.terminate();
+        pythonWorkerRef.current = null;
+      }
       const validationError = htmlErrorHandler(content);
-      setError(validationError);
+      setError(validationError ? `HTML Error: ${validationError}` : null);
       setOutput(validationError ? '' : content);
-    } else if(language==='python') {
-
-
-      const validationError = pythonErrorHandler(content);
-      setError(validationError);
-      setOutput(validationError ? '' : content);
-    }else{
-      setError(null);
-      setOutput('');
     }
-  },[content,language])
+  }, [content, language]);
 
   return (
-    
     <Container>
       <Header>
         <PreviewIcon />

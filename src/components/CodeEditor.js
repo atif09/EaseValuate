@@ -3,7 +3,7 @@ import AceEditor from 'react-ace';
 import { Container, Header, EditorWrapper } from '../styles/codeEditorStyles';
 import AnimatedCodeIcon from '../icons/AnimatedCodeIcon';
 import { supportedLanguages, languageSettings } from '../config/languages';
-import { htmlErrorHandler, pythonErrorHandler } from '../utils/errorHandlers';
+import { htmlErrorHandler} from '../utils/errorHandlers';
 
 // Ace Editor modes/themes
 import 'ace-builds/webpack-resolver';
@@ -26,9 +26,6 @@ const CodeEditor = ({ value, onChange, currentLanguage, onLanguageChange }) => {
       switch (currentLanguage) {
         case 'html':
           error = htmlErrorHandler(value);
-          break;
-        case 'python':
-          error = pythonErrorHandler(value);
           break;
         default:
           error = null;
