@@ -1,68 +1,90 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { Container, Header, PreviewContainer } from '../styles/livePreviewStyles';
 import PreviewIcon from '../icons/PreviewIcon';
 import ErrorDisplayComponent from './Preview/ErrorDisplayComponent';
-import { htmlErrorHandler, javascriptErrorHandler, pythonErrorHandler } from '../utils/errorHandlers';
+import { htmlErrorHandler, pythonErrorHandler } from '../utils/errorHandlers';
+
+//helper cuz importing it directly was causing errors ---
+function createJsWorker() {
+  const code = `
+    self.onmessage = function (e) {
+      const code = e.data;
+      let result = '';
+      let error = null;
+      const originalLog = self.console.log;
+      self.console.log = (...args) => {
+        result += args.join(' ') + '\\n';
+      };
+      try {
+        eval(code);
+      } catch (err) {
+        error = err.message;
+      }
+      self.console.log = originalLog;
+      self.postMessage({ result: result.trim(), error });
+    };
+  `;
+  const blob = new Blob([code], { type: 'application/javascript' });
+  return new Worker(URL.createObjectURL(blob));
+}
+// --- END: Helper ---
 
 const LivePreview = ({ content, language }) => {
+
   const [error, setError] = useState(null);
+
   const [output, setOutput] = useState('');
 
-  useEffect(() => {
-    let validationError = null;
-    switch (language) {
-      case 'html':
-        validationError = htmlErrorHandler(content);
-        break;
-      case 'javascript':
-        validationError = javascriptErrorHandler(content);
-        break;
-      case 'python':
-        validationError = pythonErrorHandler(content);
-        break;
-      default:
-        validationError = null;
-    }
-    setError(validationError);
+  const workerRef = useRef(null);
 
-    if (!validationError) {
-      renderPreview(content, language);
-    } else {
+  useEffect(() => {
+
+    if(language === 'javascript'){
+
+      if(workerRef.current){
+        workerRef.current.terminate();
+      }
+      workerRef.current =  createJsWorker();
+
+      workerRef.current.onmessage = (e) => {
+        clearTimeout(timeoutId);
+        setError(e.data.error ? `JavaScript Error: ${e.data.error}`: null);
+        setOutput(e.data.result || '');
+      };
+
+      const timeoutId = setTimeout(() => {
+        setError('JavaScript Error: Execution timed out (possible infinite loop).');
+        setOutput('');
+        if(workerRef.current){
+          workerRef.current.terminate();
+          workerRef.current = null;
+        }
+      },1500);
+
+      workerRef.current.postMessage(content);
+
+      return () => {
+        clearTimeout(timeoutId);
+        if(workerRef.current){
+          workerRef.current.terminate();
+          workerRef.current = null;
+        }
+      };
+    }else if(language === 'html'){
+      const validationError = htmlErrorHandler(content);
+      setError(validationError);
+      setOutput(validationError ? '' : content);
+    } else if(language==='python') {
+
+
+      const validationError = pythonErrorHandler(content);
+      setError(validationError);
+      setOutput(validationError ? '' : content);
+    }else{
+      setError(null);
       setOutput('');
     }
-
-  }, [content, language]);
-
-
-  const renderPreview = (content, language) => {
-    switch (language) {
-      case 'html':
-        setOutput(content);
-        break;
-      case 'javascript':
-        try {
-          const results = [];
-          const originalLog = console.log;
-          console.log = (...args) => {
-            results.push(args.join(' '));
-            originalLog.apply(console, args);
-          };
-
-
-          new Function(content)();
-          console.log = originalLog;
-          setOutput(results.join('\n'));
-        } catch (err) {
-          setError(`Runtime Error: ${err.message}`);
-        }
-        break;
-      case 'python':
-        setOutput(content);
-        break;
-      default:
-        setOutput('');
-    }
-  };
+  },[content,language])
 
   return (
     

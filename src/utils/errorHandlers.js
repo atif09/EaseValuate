@@ -15,15 +15,6 @@ export const htmlErrorHandler = (content) => {
   }
 };
 
-export const javascriptErrorHandler = (content) => {
-  if(!content) return null;
-  try{
-    new Function(content);
-    return null;
-  } catch(error){
-    return `JavaScript Error: ${error.message}`;
-  }
-};
 export const pythonErrorHandler = (content) => {
   if (!content) return null;
   const rules = [
