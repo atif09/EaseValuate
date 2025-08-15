@@ -225,7 +225,7 @@ const LivePreview = ({ content, language }) => {
         }}
         onMouseLeave={() => setShowTooltip(false)}
         >
-        <Bug />
+        <Bug width={22} height={22} />
         {showExclamation && (
           <span
           style={{
@@ -235,7 +235,7 @@ const LivePreview = ({ content, language }) => {
             zIndex: 3,
             pointerEvents: 'none',
           }}>
-            <BadgeAlert />
+            <BadgeAlert width={16} height ={16} />
           </span>
         )}
         </div>
