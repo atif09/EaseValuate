@@ -27,3 +27,4 @@ self.onmessage = async (event) => {
     self.postMessage({ result: '', error: 'Pyodide failed to load: ' + err.message });
   }
 };
+

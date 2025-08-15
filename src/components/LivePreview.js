@@ -1,8 +1,58 @@
 import React, { useState, useEffect, useRef } from 'react';
+import ReactDOM from 'react-dom';
 import { Container, Header, PreviewContainer } from '../styles/livePreviewStyles';
 import PreviewIcon from '../icons/PreviewIcon';
-import ErrorDisplayComponent from './Preview/ErrorDisplayComponent';
+import Bug from '../icons/AnimatedBugIcon';
+import BadgeAlert from '../icons/AnimatedExclamationBadge';
 import { htmlErrorHandler } from '../utils/errorHandlers';
+
+function ErrorTooltip({show, anchorRef, error}){
+  const [coords,setCoords] = useState({top: 0, left: 0});
+
+  useEffect(() => {
+    if(show && anchorRef.current){
+      const rect = anchorRef.current.getBoundingClientRect();
+      setCoords({
+        top: rect.bottom + 8,
+        left: rect.right -260
+      })
+    }
+  }, [show, anchorRef]);
+
+  if(!show || !error ) return null;
+
+  return ReactDOM.createPortal(
+    <div
+    style={{
+      position:'fixed',
+      top: coords.top,
+      left:coords.left,
+      background: '#2a0000',
+      color: '#fff',
+      padding: '18px 24px',
+      borderRadius: 10,
+      boxShadow: '0 4px 24px rgba(0,0,0,0.5)',
+      zIndex: 9999,
+      minWidth: 260,
+      maxWidth: 340,
+      fontSize: 15,
+      border: '2px solid #ff3b3b',
+      fontFamily: 'monospace',
+      pointerEvents: 'auto',
+      transition: 'opacity 0.2s',
+    }}>
+      <div style ={{fontWeight: 700, color: '#ff3b3b', marginBottom: 8}}>
+        &#9888; Error &mdash; <span style={{color: 'fff', fontWeight: 500}}>
+          Feel stuck?
+        </span>
+        </div>
+        <div style={{whiteSpace: 'pre-wrap', wordBreak: 'break-word'}}>
+          {error}
+      </div>
+    </div>,
+    document.body
+  );
+}
 
 function createJsWorker() {
   const code = `
@@ -17,7 +67,7 @@ function createJsWorker() {
       try {
         eval(code);
       } catch (err) {
-        error = err.message;
+        error = err && err.message ? err.message : String(err);
       }
       self.console.log = originalLog;
       self.postMessage({ result: result.trim(), error });
@@ -37,12 +87,27 @@ function createPythonWorker() {
     });
 }
 
+
+
 const LivePreview = ({ content, language }) => {
   const [error, setError] = useState(null);
   const [output, setOutput] = useState('');
+  const [showTooltip, setShowTooltip] = useState(false);
+  const [showExclamation, setShowExclamation] = useState(false);
   const jsWorkerRef = useRef(null);
   const pythonWorkerRef = useRef(null);
   const timeoutRef = useRef(null);
+  const bugRef = useRef(null);
+
+  useEffect(() => {
+    let timer;
+    if(error){
+      timer= setTimeout(() => setShowExclamation(true) ,2000);
+    } else{
+      setShowExclamation(false);
+    }
+    return () => clearTimeout(timer);
+  },[error]);
 
   useEffect(() => {
     return () => {
@@ -146,14 +211,37 @@ const LivePreview = ({ content, language }) => {
 
   return (
     <Container>
-      <Header>
-        <PreviewIcon />
-        <span style={{ color: '#aaa', fontSize: 14 }}>{language.toUpperCase()}</span>
+      <Header style ={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center'}}>
+        <div style ={{display: 'flex', alignItems: 'center', gap: 8}}>
+          <PreviewIcon />
+          <span style={{ color: '#aaa', fontSize: 14 }}>{language.toUpperCase()}</span>
+        </div>
+        <div
+        ref={bugRef} 
+        style ={{position: 'relative', display: 'inline-block'}}
+        onMouseEnter={() => {
+          setShowTooltip(true);
+          setShowExclamation(false);
+        }}
+        onMouseLeave={() => setShowTooltip(false)}
+        >
+        <Bug />
+        {showExclamation && (
+          <span
+          style={{
+            position: 'absolute',
+            top: -6,
+            right: -6,
+            zIndex: 3,
+            pointerEvents: 'none',
+          }}>
+            <BadgeAlert />
+          </span>
+        )}
+        </div>
+        <ErrorTooltip show={showTooltip} anchorRef={bugRef} error={error}/>
       </Header>
       <PreviewContainer>
-        {error ? (
-          <ErrorDisplayComponent error={error} language={language} />
-        ) : (
           <div className={`preview-${language}`}>
             {language === 'html' ? (
               <iframe
@@ -168,10 +256,9 @@ const LivePreview = ({ content, language }) => {
               <pre style={{ margin: 0 }}>{output}</pre>
             )}
           </div>
-        )}
       </PreviewContainer>
     </Container>
   );
 };
 
-export default LivePreview;
+export default LivePreview; 
