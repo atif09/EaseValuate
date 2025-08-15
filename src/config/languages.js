@@ -1,40 +1,24 @@
 export const supportedLanguages = {
   html: {
-  
     name: 'HTML',
+  
+    label: 'HTML',
     mode: 'html',
-    defaultTemplate: `<!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="UTF-8">
-  <title>My Page</title>
-  <style>
-    body { 
-      font-family: Arial, sans-serif;
-      margin: 20px;
-    }
-  </style>
-</head>
-<body>
-  <h1>Hello World</h1>
-</body>
-</html>`,
-    preview: 'iframe'
+    defaultTemplate: '<!DOCTYPE html>\n<html>\n  <head>\n    <title>Document</title>\n  </head>\n  <body>\n    \n  </body>\n</html>',
   },
   javascript: {
-
     name: 'JavaScript',
+
+    label: 'JavaScript',
     mode: 'javascript',
-    defaultTemplate: `// Write your JavaScript code here
-console.log("Hello World");`,
+    defaultTemplate: `// Write your JavaScript code here\nconsole.log("Hello World");`,
     
   },
   python: {
 
     name: 'Python',
     mode: 'python',
-    defaultTemplate: `# Write your Python code here
-print("Hello World")`,
+    defaultTemplate: `# Write your Python code here\nprint("Hello World")`,
     
   }
 };

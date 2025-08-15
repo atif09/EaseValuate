@@ -48,3 +48,5 @@ function ErrorTooltip({show, anchorRef, error}){
     document.body
   );
 }
+
+export default ErrorTooltip;
