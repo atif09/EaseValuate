@@ -1,11 +1,14 @@
 import React, { useState, useEffect } from 'react';
 import styled from 'styled-components';
+import HamburgerMenu from './HamburgerMenu';
 
 const HeaderContainer = styled.header`
   padding: 1rem;
   background: rgba(17,25,40,0.25);
   backdrop-filter: blur(2px);
   border-bottom: 1px solid rgba(162,32,255,0.12);
+  display: flex;
+  align-items: center;
 `;
 
 // Logo with a typing effect
@@ -40,7 +43,16 @@ const Cursor = styled.span`
   50%{opacity:0;}}
 `;
 
+const LogoRow = styled.div`
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+`;
 
+const LogoTyping = styled.div`
+  display: flex;
+  align-items: center;
+`;
 
 const Header = () => {
   const [displayText, setDisplayText] = useState('');
@@ -61,19 +73,23 @@ const Header = () => {
         setTypingComplete(true);
         clearInterval(typingInterval);
       }
-    }, 200); 
+    }, 120); 
     
     return () => clearInterval(typingInterval);
   }, []);
 
   return (
     <HeaderContainer>
-      <div style={{ display: 'inline-flex', alignItems: 'center' }}>
-        <Logo>
+        <LogoRow>
+          <HamburgerMenu />
+          <LogoTyping>
+            <Logo>
           {displayText}
         </Logo>
         {!typingComplete && <Cursor>|</Cursor>}
-      </div>
+          </LogoTyping>
+          
+        </LogoRow>
     </HeaderContainer>
   );
 };
