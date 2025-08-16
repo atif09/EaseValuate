@@ -57,7 +57,8 @@ function HamburgerMenu() {
         {dropdownOpen && (
           <PatternDropdown
           hoveredIndex={hoveredIndex}
-          setHoveredIndex={setHoveredIndex}/>
+          setHoveredIndex={setHoveredIndex}
+          onPatternSelect={() => setDropdownOpen(false)}/>
         )}
         
         
