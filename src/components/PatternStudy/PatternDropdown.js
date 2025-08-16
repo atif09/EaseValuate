@@ -1,5 +1,6 @@
 import React from 'react';
 import patterns from './patternList';
+import {useNavigate} from 'react-router-dom';
 
 const hoverBg = '#23243a';
 const purple = '#a120ff';
@@ -33,7 +34,8 @@ const patternItemStyle = (hovered) => ({
   fontFamily: `'Inter', 'Montserrat', 'Segoe UI', Arial, sans-serif`,
 });
 
-function PatternDropdown({ hoveredIndex, setHoveredIndex }) {
+function PatternDropdown({ hoveredIndex, setHoveredIndex, onPatternSelect }) {
+  const navigate = useNavigate();
   return (
     <div style={dropdownStyle}>
       <style>
@@ -54,9 +56,14 @@ function PatternDropdown({ hoveredIndex, setHoveredIndex }) {
         {patterns.map((pattern, idx) => (
           <div
             key={pattern}
-            style={patternItemStyle(hoveredIndex === idx)}
+            style={patternItemStyle(hoveredIndex===idx)}
             onMouseEnter={() => setHoveredIndex(idx)}
             onMouseLeave={() => setHoveredIndex(-1)}
+            onClick={() => {
+              navigate(`/pattern/${encodeURIComponent(pattern)}`);
+              if(onPatternSelect) onPatternSelect();
+            }}
+ 
           >
             {pattern}
           </div>

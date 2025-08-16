@@ -7,6 +7,8 @@ import LivePreview from './components/LivePreview';
 import GlobalStyles from './styles/globalStyles';
 import BackgroundEffect from './components/BackgroundEffect';
 import { supportedLanguages } from './config/languages';
+import {BrowserRouter as Router, Routes, Route} from 'react-router-dom';
+import PatternPanel from './components/PatternStudy/PatternPanel';
 
 const AppContainer = styled.div`
   display: flex;
@@ -72,11 +74,13 @@ function App() {
   };
 
   return (
-    <>
+    <Router>
       <GlobalStyles />
       <BackgroundEffect />
       <AppContainer className="app-container">
         <Header />
+        <Routes>
+        <Route path="/" element={
         <MainContent>
           <EditorSection>
             <CodeEditor
@@ -90,8 +94,11 @@ function App() {
             <LivePreview content={code} language={currentLanguage} />
           </PreviewSection>
         </MainContent>
+      } />
+      <Route path="/pattern/:patternName" element={<PatternPanel />}/>
+    </Routes>
       </AppContainer>
-    </>
+    </Router>
   );
 }
 
