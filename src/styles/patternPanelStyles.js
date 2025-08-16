@@ -10,15 +10,17 @@ export const leftPanelStyle={
   minWidth: 0,
   padding: '2rem 1rem 2rem 2rem',
   borderRight: '1px solid #23243a',
-  background: 'rgba(10,13,22,0.96)',
+  background: 'rgba(10,13,22,0.35)',
   overflow: 'auto',
+  backdropFilter: 'blur(2px)',
 };
 
 export const rightPanelStyle = {
   flex: 1,
   minWidth: 0,
   padding: '2rem 2rem 2rem 1rem',
-  background: 'rgba(10,13,22,0.92)',
+  background: 'rgba(10,13,22,0.25)',
   overflow: 'auto',
+  backdropFilter: 'blur(2px)',
 
 };
