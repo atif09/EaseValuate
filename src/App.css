@@ -8,4 +8,21 @@
   background: transparent !important;
 }
 
+.purple-scrollbar::-webkit-scrollbar{
+  height:8px;
+  background: transparent;
+}
+.purple-scrollbar::-webkit-scrollbar-thumb{
+  background: #a120ff;
+  border-radius: 8px;
+}
+.purple-scrollbar::-webkit-scrollbar-thumb:hover{
+  background: #7d1acc;
+}
+
+.purple-scrollbar{
+  scrollbar-color: #a120ff transparent;
+  scrollbar-width:thin;
+}
+
 

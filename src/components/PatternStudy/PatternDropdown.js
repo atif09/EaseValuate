@@ -69,6 +69,7 @@ function PatternDropdown({ hoveredIndex, setHoveredIndex, onPatternSelect }) {
           </div>
         ))}
       </div>
+    
     </div>
   );
 }
