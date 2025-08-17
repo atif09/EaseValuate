@@ -21,6 +21,24 @@ function BoilerplateTabs({ patternName }) {
 
   return (
     <div>
+      <style>
+        {`
+        .pattern-link {
+            color: #a120ff;
+            text-decoration: underline;
+            font-weight: 500;
+            font-size: 1.07rem;
+            letter-spacing: 0.2px;
+            transition: color 0.18s, font-weight 0.18s, box-shadow 0.18s, background 0.18s;
+           
+          }
+          .pattern-link:hover, .pattern-link:focus {
+            color: #fff;
+            font-size: 1.18rem;
+            
+          }
+        `}
+      </style>
       <h3 style={{ color: '#a120ff' }}>{patternName}'s Template</h3>
       <div style={{
         display: 'flex',
@@ -83,7 +101,7 @@ function BoilerplateTabs({ patternName }) {
           background: 'rgba(10,13,22,0.18)',
           borderRadius: '0 0 8px 8px',
         }}>
-          <div style={{ color: '#a0a0b2', marginBottom: '0.5rem', fontWeight: 600, fontSize: '1.08rem' }}></div>
+          
           <ul style={{ paddingLeft: '1.2rem', margin: 0, listStyle: 'none' }}>
             {(exampleProblems[patternName] || []).map((link, idx) => (
               <li key={idx} style={{ marginBottom: '1.1rem' }}>
@@ -91,14 +109,7 @@ function BoilerplateTabs({ patternName }) {
                   href={link.url}
                   target="_blank"
                   rel="noopener noreferrer"
-                  style={{
-                    color: '#a120ff',
-                    textDecoration: 'underline',
-                    fontWeight: 600,
-                    fontSize: '1.07rem',
-                    letterSpacing: '0.2px',
-                  }}
-                >
+                  className="pattern-link">
                   {link.title}
                 </a>
               </li>
