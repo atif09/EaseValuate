@@ -2,12 +2,8 @@ import { Prism as SyntaxHighlighter } from 'react-syntax-highlighter';
 import { oneDark } from 'react-syntax-highlighter/dist/esm/styles/prism';
 import React, { useState } from 'react';
 import exampleProblems from './exampleProblems';
+import patternBoilerplates from './patternBoilerplates';
 
-const boilerplate = {
-  python: `# Python boilerplate for this pattern \nprint("Hi")`,
-  cpp: `// C++ boilerplate for this pattern\n#include <iostream>\nint main() {\n std::cout << "Hi 2" << std::endl;\n  return 0;\n}`,
-  java: `// Java boilerplate for this pattern\npublic class Main {\n public static void main(String[] args) {\n  System.out.println("Hi 3");\n }\n}`,
-};
 
 const tabNames = [
   { key: 'python', label: 'Python' },
@@ -134,7 +130,7 @@ function BoilerplateTabs({ patternName }) {
           }}
           className='purple-scrollbar'
         >
-          {boilerplate[activeTab]}
+          {(patternBoilerplates[patternName] && patternBoilerplates[patternName][activeTab]) || ''}
         </SyntaxHighlighter>
       )}
     </div>
