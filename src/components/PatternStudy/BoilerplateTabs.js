@@ -1,6 +1,6 @@
 import { Prism as SyntaxHighlighter } from 'react-syntax-highlighter';
 import { oneDark } from 'react-syntax-highlighter/dist/esm/styles/prism';
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import exampleProblems from './exampleProblems';
 import patternBoilerplates from './patternBoilerplates';
 
@@ -12,8 +12,12 @@ const tabNames = [
   { key: 'examples', label: 'Example Problems' }
 ];
 
-function BoilerplateTabs({ patternName }) {
+function BoilerplateTabs({ patternName, highlightLine }) {
   const [activeTab, setActiveTab] = useState('python');
+
+  useEffect(() => {
+    setActiveTab('python');
+  }, [patternName]);
 
   return (
     <div>
@@ -35,7 +39,7 @@ function BoilerplateTabs({ patternName }) {
           }
         `}
       </style>
-      <h3 style={{ color: '#a120ff' }}>{patternName}'s Template</h3>
+      <h3 style={{ color: '#a120ff' }}>{patternName} Template</h3>
       <div style={{
         display: 'flex',
         gap: '0.5rem',
@@ -116,6 +120,12 @@ function BoilerplateTabs({ patternName }) {
         <SyntaxHighlighter
           language={activeTab === 'cpp' ? 'cpp' : activeTab}
           style={oneDark}
+          wrapLines={true}
+          lineProps={lineNumber => 
+            highlightLine === lineNumber 
+            ? { style: { background: '#a120ff22', transition: 'background 0.2s'} }
+            :{}
+          }
           customStyle={{
             background: 'rgba(10,13,22,0.18)',
             borderRadius: '0 0 8px 8px',

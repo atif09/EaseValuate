@@ -6,6 +6,7 @@ const slidingWindowSteps = [
     L: 0,
     R: 0,
     note: "",
+    highlightLine:2
   },
   {
     array: [1, 2, 3, 2, 3, 3],
@@ -14,6 +15,7 @@ const slidingWindowSteps = [
     L: 0,
     R: 1,
     note: "",
+    highlightLine:11
   },
   {
     array: [1, 2, 3, 2, 3, 3],
@@ -22,6 +24,7 @@ const slidingWindowSteps = [
     L: 0,
     R: 2,
     note: "",
+    highlightLine: 11
   },
   {
     array: [1, 2, 3, 2, 3, 3],
@@ -30,6 +33,7 @@ const slidingWindowSteps = [
     L: 1,
     R: 3,
     note: "",
+    highlightLine: 6
   },
   {
     array: [1, 2, 3, 2, 3, 3],
@@ -38,6 +42,7 @@ const slidingWindowSteps = [
     L: 2,
     R: 4,
     note: "",
+    highlightLine: 11
   },
   {
     array: [1, 2, 3, 2, 3, 3],
@@ -46,6 +51,7 @@ const slidingWindowSteps = [
     L: 3,
     R: 5,
     note: "valid window found!",
+    highlightLine: 9
   },
 ];
 
