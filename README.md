@@ -3,6 +3,10 @@
 EaseValuate is an interactive code evaluation platform that helps users write, preview, and debug code effortlessly.  
 It currently supports HTML, Python, and JavaScript with live preview and smart error handling, making it a practical tool for learning, experimenting, and rapid prototyping.
 
+This is currently **under progress** and will have a responsive design for other devices too. Currently it only works well on Laptops and Desktops. 
+
+But you can check out the progress so far :) (click on the hyperlink below)
+
 [Live on Vercel](https://ease-valuate.vercel.app/)
 ---
 
