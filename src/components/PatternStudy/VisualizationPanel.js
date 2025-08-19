@@ -1,4 +1,4 @@
-import React, {useState, useEffect} from 'react';
+import React, {useState, useEffect, useRef, useLayoutEffect} from 'react';
 import slidingWindowSteps from './animations/slidingWindowSteps';
 import twoPointersSteps from './animations/twoPointersSteps';
 import inPlaceReversalSteps from './animations/inPlaceReversalSteps';
@@ -30,9 +30,16 @@ function VisualizationPanel({patternName, onHighlightLineChange}) {
     if(patternName === 'Subsets (Backtracking)') setRevealCount(1);
   }, [patternName]);
 
+  const nodeRefs = useRef({});
+  const containerRef= useRef(null);
+  const [treeReady, setTreeReady] = useState(false);
 
-
-
+  useLayoutEffect(() => {
+    if(patternName === 'Subsets (Backtracking)') {
+      setTreeReady(false);
+      requestAnimationFrame(() => setTreeReady(true));
+    }
+  }, [revealCount, patternName]);
  
   function getRevealedNodeIds(tree,count) {
     const ids = [];
@@ -45,12 +52,74 @@ function VisualizationPanel({patternName, onHighlightLineChange}) {
     return ids;
   }
 
+  function renderBranches(tree,revealedIds) {
+    const lines=[];
+    let containerRect=null;
+    let width = 0;
+    let height = 0;
+    if(containerRef.current) {
+      containerRect=containerRef.current.getBoundingClientRect();
+      width = containerRect.width;
+      height = containerRect.height;
+    }
+    function dfs(node) {
+      if(!node || !revealedIds.includes(node.id)) return;
+      const parentEl = nodeRefs.current[node.id];
+      node.children.forEach(child => {
+        if(revealedIds.includes(child.id)) {
+          const childEl = nodeRefs.current[child.id];
+          if(parentEl && childEl && containerRect) {
+            const parentRect = parentEl.getBoundingClientRect();
+            const childRect = childEl.getBoundingClientRect();
+            const x1 = parentRect.left + parentRect.width / 2 - containerRect.left;
+            const y1 = parentRect.bottom - containerRect.top;
+            const x2 = childRect.left + childRect.width / 2 - containerRect.left;
+            const y2 = childRect.top - containerRect.top;
+            lines.push({x1,y1,x2,y2,key:node.id + '-' + child.id});
+          }
+        }
+        dfs(child)
+      });
+    }
+    dfs(tree);
+
+    if(!width || !height) return null;
+
+    return (
+      <svg
+        style={{
+          position: 'absolute',
+          left: 0,
+          top: 0,
+          pointerEvents: 'none',
+          width: '100%',
+          height: '100%',
+          zIndex: 0
+        }}
+        width={width}
+        height={height}>
+          {lines.map(line => (
+            <line
+            key={line.key}
+            x1={line.x1}
+            y1={line.y1}
+            x2={line.x2}
+            y2={line.y2}
+            stroke='#fff'
+            strokeWidth={2}/>
+          ))}
+        </svg>
+    );
+  }
+
   function renderTree(node, revealedIds, currentId) {
     if (!revealedIds.includes(node.id)) return null;
     const hasChildren = node.children && node.children.length > 0 && node.children.some(child => revealedIds.includes(child.id));
   return (
     <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', position: 'relative' }}>
-      <div style={{
+      <div
+      ref={el => {if (el) nodeRefs.current[node.id] = el; }} 
+      style={{
         padding: 8,
         margin: 4,
         border: node.id === currentId ? '2px solid #a120ff' : '1px solid #fff',
@@ -63,35 +132,6 @@ function VisualizationPanel({patternName, onHighlightLineChange}) {
       }}>
         [{node.curSet.join(', ')}]
       </div>
-      {hasChildren && (
-        <div style={{
-          position:'relative',
-          height: 24,
-          width: 64,
-          display: 'flex',
-          justifyContent: 'center',
-          alignItems: 'flex-start',
-          margin: '0 auto'
-        }}>
-          {node.children.map((child,idx) =>
-            revealedIds.includes(child.id) ? (
-              <div 
-                key={child.id}
-                style={{
-                  position:'absolute',
-                  left: idx === 0 ? 8 : 56,
-                  width: 2,
-                  height: 24,
-                  background: '#fff',
-                  transform: idx === 0 ? 'rotate(30deg)' : 'rotate(-30deg)',
-                  zIndex: 0,
-                  transformOrigin: 'top'
-                }}
-              />
-            ) : null 
-          )}
-        </div>
-      )}
       <div style={{ display: 'flex', justifyContent: 'center' }}>
         {node.children.map(child => (
           <div key={child.id} style={{ margin: '0 12px' }}>
@@ -119,7 +159,8 @@ if (patternName === "Subsets (Backtracking)") {
   return (
     <div style={{ color: '#fff', textAlign: 'center' }}>
       <h3>Subsets (Backtracking) Tree</h3>
-      <div style={{ display: 'flex', justifyContent: 'center', margin: 24 }}>
+      <div ref={containerRef} style={{position: 'relative', display: 'flex', justifyContent: 'center', margin: 24,minHeight: 250 }}>
+        {treeReady && renderBranches(subsetsTree,revealedIds)}
         {renderTree(subsetsTree, revealedIds, currentId)}
       </div>
       <div style={{ color: '#fff', marginBottom: 12 }}>
