@@ -4,7 +4,7 @@ import twoPointersSteps from './animations/twoPointersSteps';
 import inPlaceReversalSteps from './animations/inPlaceReversalSteps';
 import bfsSteps from './animations/bfsSteps';
 import binarySearchSteps from './animations/binarySearchSteps';
-import subsetsTree from './animations/subsetsTree';
+import subsetsTree, {nums} from './animations/subsetsTree';
 
 
 function VisualizationPanel({patternName, onHighlightLineChange}) {
@@ -52,86 +52,144 @@ function VisualizationPanel({patternName, onHighlightLineChange}) {
     return ids;
   }
 
-  function renderBranches(tree,revealedIds) {
-    const lines=[];
-    let containerRect=null;
-    let width = 0;
-    let height = 0;
-    if(containerRef.current) {
-      containerRect=containerRef.current.getBoundingClientRect();
-      width = containerRect.width;
-      height = containerRect.height;
-    }
-    function dfs(node) {
-      if(!node || !revealedIds.includes(node.id)) return;
-      const parentEl = nodeRefs.current[node.id];
-      node.children.forEach(child => {
-        if(revealedIds.includes(child.id)) {
-          const childEl = nodeRefs.current[child.id];
-          if(parentEl && childEl && containerRect) {
-            const parentRect = parentEl.getBoundingClientRect();
-            const childRect = childEl.getBoundingClientRect();
-            const x1 = parentRect.left + parentRect.width / 2 - containerRect.left;
-            const y1 = parentRect.bottom - containerRect.top;
-            const x2 = childRect.left + childRect.width / 2 - containerRect.left;
-            const y2 = childRect.top - containerRect.top;
-            lines.push({x1,y1,x2,y2,key:node.id + '-' + child.id});
+  function renderBranches(tree, revealedIds) {
+  const lines = [];
+  let containerRect = null;
+  let width = 0;
+  let height = 0;
+  if (containerRef.current) {
+    containerRect = containerRef.current.getBoundingClientRect();
+    width = containerRect.width;
+    height = containerRect.height;
+  }
+
+  function dfs(node) {
+    if (!node || !revealedIds.includes(node.id)) return;
+    const parentEl = nodeRefs.current[node.id];
+    node.children.forEach((child, idx) => {
+      if (revealedIds.includes(child.id)) {
+        const childEl = nodeRefs.current[child.id];
+        if (parentEl && childEl && containerRect) {
+          const parentRect = parentEl.getBoundingClientRect();
+          const childRect = childEl.getBoundingClientRect();
+          const x1 = parentRect.left + parentRect.width / 2 - containerRect.left;
+          const y1 = parentRect.bottom - containerRect.top;
+          const x2 = childRect.left + childRect.width / 2 - containerRect.left;
+          const y2 = childRect.top - containerRect.top;
+
+          let label = '';
+          let labelColor = '#a120ff';
+          let labelX, labelY;
+
+          if (idx === 0) {
+            label = `curSet.append(${nums[node.i]})`;
+            labelColor = "#a120ff";
+            labelX = x1 * 0.7 + x2 * 0.3;
+            labelY = y1 * 0.7 + y2 * 0.3 - 12;
+          } else {
+            label = "curSet.pop()";
+            labelColor = "#fff";
+            labelX = x1 * 0.3 + x2 * 0.7;
+            labelY = y1 * 0.3 + y2 * 0.7 + 14;
           }
+
+          lines.push({ x1, y1, x2, y2, key: node.id + '-' + child.id, label, labelColor, labelX,labelY });
         }
-        dfs(child)
-      });
-    }
-    dfs(tree);
+      }
+      dfs(child);
+    });
+  }
+  dfs(tree);
 
-    if(!width || !height) return null;
-
-    return (
-      <svg
-        style={{
-          position: 'absolute',
-          left: 0,
-          top: 0,
-          pointerEvents: 'none',
-          width: '100%',
-          height: '100%',
-          zIndex: 0
-        }}
-        width={width}
-        height={height}>
-          {lines.map(line => (
-            <line
-            key={line.key}
+  if (!width || !height) return null;
+  return (
+    <svg
+      style={{
+        position: 'absolute',
+        left: 0,
+        top: 0,
+        pointerEvents: 'none',
+        width: width,
+        height: height,
+        zIndex: 0
+      }}
+      width={width}
+      height={height}
+    >
+      {lines.map(line => (
+        <g key={line.key}>
+          <line
             x1={line.x1}
             y1={line.y1}
             x2={line.x2}
             y2={line.y2}
-            stroke='#fff'
-            strokeWidth={2}/>
-          ))}
-        </svg>
-    );
-  }
+            stroke={line.labelColor}
+            strokeWidth={2}
+          />
+          <text
+            x={line.labelX}
+            y={line.labelY}
+            fill={line.labelColor}
+            fontSize='13'
+            fontWeight='bold'
+            textAnchor='middle'
+            alignmentBaseline='middle'
+            style={{
+              paintOrder: 'stroke',
+              stroke: '#23243a',
+              strokeWidth: 3,
+              strokeLinejoin: 'round',
+              filter: 'drop-shadow(0 1px 2px #000)'
+            }}
+          >
+            {line.label}
+          </text>
+        </g>
+      ))}
+    </svg>
+  );
+}
+
+  
+    
 
   function renderTree(node, revealedIds, currentId) {
     if (!revealedIds.includes(node.id)) return null;
-    const hasChildren = node.children && node.children.length > 0 && node.children.some(child => revealedIds.includes(child.id));
-  return (
-    <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', position: 'relative' }}>
-      <div
-      ref={el => {if (el) nodeRefs.current[node.id] = el; }} 
-      style={{
-        padding: 8,
-        margin: 4,
-        border: node.id === currentId ? '2px solid #a120ff' : '1px solid #fff',
-        background: node.id === currentId ? '#a120ff22' : 'transparent',
-        borderRadius: 6,
-        color: '#fff',
-        fontWeight: node.id === currentId ? 700 : 400,
-        minWidth: 40,
-        zIndex: 1
-      }}>
+    const hasChildren = node.children && node.children.length > 0;
+
+    return (
+      <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', position: 'relative' }}>
+        <div
+        ref={el => {if (el) nodeRefs.current[node.id] = el; }} 
+        style={{
+          padding: 8,
+          margin: 4,
+          border: node.id === currentId ? '2px solid #a120ff' : '1px solid #fff',
+          background: node.id === currentId ? '#a120ff22' : 'transparent',
+          borderRadius: 6,
+          color: '#fff',
+          fontWeight: node.id === currentId ? 700 : 400,
+          minWidth: 40,
+          zIndex: 1,
+          position: 'relative'
+        }}>
         [{node.curSet.join(', ')}]
       </div>
+      {hasChildren && (
+        <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'flex-start', position: 'relative', height: 32 }}>
+          {node.children.map((child, idx) => (
+            <div key={child.id} style={{ position: 'relative', margin: '0 24px', textAlign: 'center' }}>
+              <div style={{height:16}}/>
+              <div style={{
+                width: 2,
+                height: 24,
+                background: child.decision === 'include' ? '#a120ff' : '#fff',
+                margin: '0 auto'
+              }} />
+            </div>
+          ))}
+        </div>
+      )}
       <div style={{ display: 'flex', justifyContent: 'center' }}>
         {node.children.map(child => (
           <div key={child.id} style={{ margin: '0 12px' }}>

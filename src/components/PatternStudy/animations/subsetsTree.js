@@ -1,22 +1,30 @@
-function buildSubsetsTree(nums, path = [], i=0, id = 'root') {
-  if(i===nums.length) {
-    return{
-      id,
-      curSet: [...path],
-      i,
-      children: []
-    };
-  }
-  const left = buildSubsetsTree(nums, [...path, nums[i]], i+1, id+'LEFT');
-  const right = buildSubsetsTree(nums, path, i+1,id+'RIGHT');
-  return {
+const nums = [1, 2, 3];
+export {nums};
+
+function buildSubsetsTree(nums, i = 0, curSet = [], id = "root") {
+  const node = {
     id,
-    curSet: [...path],
     i,
-    children:[left,right]
+    curSet: [...curSet],
+    children: [],
   };
+
+  if (i === nums.length) {
+    return node;
+  }
+
+  const includeChild = buildSubsetsTree(nums, i + 1, [...curSet, nums[i]], id + "I");
+  includeChild.decision = "include";
+  includeChild.decisionValue = nums[i];
+
+  const excludeChild = buildSubsetsTree(nums, i + 1, curSet, id + "E");
+  excludeChild.decision = "exclude";
+  excludeChild.decisionValue = nums[i];
+
+  node.children = [includeChild, excludeChild];
+  return node;
 }
 
-const subsetsTree = buildSubsetsTree([1,2,3]);
+const subsetsTree = buildSubsetsTree(nums);
 
 export default subsetsTree;
