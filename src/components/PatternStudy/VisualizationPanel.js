@@ -4,6 +4,7 @@ import twoPointersSteps from './animations/twoPointersSteps';
 import inPlaceReversalSteps from './animations/inPlaceReversalSteps';
 import bfsSteps from './animations/bfsSteps';
 import binarySearchSteps from './animations/binarySearchSteps';
+import subsetsTree from './animations/subsetsTree';
 
 
 function VisualizationPanel({patternName, onHighlightLineChange}) {
@@ -13,7 +14,9 @@ function VisualizationPanel({patternName, onHighlightLineChange}) {
   else if(patternName === "In-place Reversal of a Linked List") steps = inPlaceReversalSteps;
   else if(patternName === "Breadth-First Search (BFS)") steps = bfsSteps;
   else if(patternName === "Binary Search") steps = binarySearchSteps;
+  
 
+  const [revealCount, setRevealCount] = useState(1);
   const [step, setStep] = useState(0);
   const current = (steps && steps.length > 0 && step < steps.length) ? steps[step] : null;
 
@@ -23,13 +26,153 @@ function VisualizationPanel({patternName, onHighlightLineChange}) {
     }
   }, [step,steps,onHighlightLineChange,current])
 
-  if(!steps.length || steps.length === 0 || !current) {
+  useEffect(() => {
+    if(patternName === 'Subsets (Backtracking)') setRevealCount(1);
+  }, [patternName]);
+
+
+
+
+ 
+  function getRevealedNodeIds(tree,count) {
+    const ids = [];
+    function dfs(node) {
+      if(!node || ids.length >= count) return;
+      ids.push(node.id);
+      node.children.forEach(child => dfs(child));
+    }
+    dfs(tree);
+    return ids;
+  }
+
+  function renderTree(node, revealedIds, currentId) {
+    if (!revealedIds.includes(node.id)) return null;
+    const hasChildren = node.children && node.children.length > 0 && node.children.some(child => revealedIds.includes(child.id));
+  return (
+    <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', position: 'relative' }}>
+      <div style={{
+        padding: 8,
+        margin: 4,
+        border: node.id === currentId ? '2px solid #a120ff' : '1px solid #fff',
+        background: node.id === currentId ? '#a120ff22' : 'transparent',
+        borderRadius: 6,
+        color: '#fff',
+        fontWeight: node.id === currentId ? 700 : 400,
+        minWidth: 40,
+        zIndex: 1
+      }}>
+        [{node.curSet.join(', ')}]
+      </div>
+      {hasChildren && (
+        <div style={{
+          position:'relative',
+          height: 24,
+          width: 64,
+          display: 'flex',
+          justifyContent: 'center',
+          alignItems: 'flex-start',
+          margin: '0 auto'
+        }}>
+          {node.children.map((child,idx) =>
+            revealedIds.includes(child.id) ? (
+              <div 
+                key={child.id}
+                style={{
+                  position:'absolute',
+                  left: idx === 0 ? 8 : 56,
+                  width: 2,
+                  height: 24,
+                  background: '#fff',
+                  transform: idx === 0 ? 'rotate(30deg)' : 'rotate(-30deg)',
+                  zIndex: 0,
+                  transformOrigin: 'top'
+                }}
+              />
+            ) : null 
+          )}
+        </div>
+      )}
+      <div style={{ display: 'flex', justifyContent: 'center' }}>
+        {node.children.map(child => (
+          <div key={child.id} style={{ margin: '0 12px' }}>
+            {renderTree(child, revealedIds, currentId)}
+          </div>
+        ))}
+      </div>
+    </div>
+  );
+}
+
+if (patternName === "Subsets (Backtracking)") {
+  const revealedIds = getRevealedNodeIds(subsetsTree, revealCount);
+  const currentId = revealedIds[revealedIds.length - 1];
+
+  
+  function collectSubsets(tree, revealedIds, arr = []) {
+    if (!tree || !revealedIds.includes(tree.id)) return arr;
+    if (tree.children.length === 0) arr.push(tree.curSet);
+    tree.children.forEach(child => collectSubsets(child, revealedIds, arr));
+    return arr;
+  }
+  const revealedSubsets = collectSubsets(subsetsTree, revealedIds, []);
+
+  return (
+    <div style={{ color: '#fff', textAlign: 'center' }}>
+      <h3>Subsets (Backtracking) Tree</h3>
+      <div style={{ display: 'flex', justifyContent: 'center', margin: 24 }}>
+        {renderTree(subsetsTree, revealedIds, currentId)}
+      </div>
+      <div style={{ color: '#fff', marginBottom: 12 }}>
+        Revealed Subsets: [
+          {revealedSubsets.map((s, i) => (
+            <span key={i}>[{s.join(', ')}]{i < revealedSubsets.length - 1 ? ', ' : ''}</span>
+          ))}
+        ]
+      </div>
+      <div>
+        <button
+          onClick={() => setRevealCount(c => Math.max(1, c - 1))}
+          disabled={revealCount === 1}
+          style={{
+            marginRight: 16,
+            padding: '0.5rem 1.2rem',
+            borderRadius: 6,
+            border: 'none',
+            background: '#23243a',
+            color: '#fff',
+            fontWeight: 600,
+            cursor: revealCount === 1 ? 'not-allowed' : 'pointer',
+            opacity: revealCount === 1 ? 0.5 : 1
+          }}>
+          Previous
+        </button>
+        <button
+          onClick={() => setRevealCount(c => c + 1)}
+          disabled={getRevealedNodeIds(subsetsTree, revealCount + 1).length === revealCount}
+          style={{
+            padding: '0.5rem 1.2rem',
+            borderRadius: 6,
+            border: 'none',
+            background: '#a120ff',
+            color: '#fff',
+            fontWeight: 600,
+            cursor: getRevealedNodeIds(subsetsTree, revealCount + 1).length === revealCount ? 'not-allowed' : 'pointer',
+            opacity: getRevealedNodeIds(subsetsTree, revealCount + 1).length === revealCount ? 0.5 : 1
+          }}>
+          Next
+        </button>
+      </div>
+    </div>
+  );
+}
+
+if(!steps.length || steps.length === 0 || !current) {
     return (
       <div style={{ color: '#fff', textAlign: 'center', marginTop: '3rem'}}>
         No
       </div>
     );
-  }
+}
 
   if (patternName === "Binary Search") {
   return (
