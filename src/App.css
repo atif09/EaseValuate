@@ -49,11 +49,11 @@
     box-shadow: none;
   }
   50% {
-    background-color: rgba(255, 235, 59, 0.5);
+    background-color: rgba(161,32,255,0.5);
     box-shadow: 0 0 12px rgba(161, 32, 255, 0.5);
   }
   100% { 
-    background-color: rgba(255, 235, 59, 0.3);
+    background-color: rgba(161,32,255,0.3);
     box-shadow: 0 0 8px rgba(161, 32, 255, 0.3);
   }
 }
