@@ -1,12 +1,13 @@
 const nums = [1, 2, 3];
 export {nums};
 
-function buildSubsetsTree(nums, i = 0, curSet = [], id = "root") {
+function buildSubsetsTree(nums, i = 0, curSet = [], id = "root",level=0) {
   const node = {
     id,
     i,
     curSet: [...curSet],
     children: [],
+    level,
   };
 
   if (i === nums.length) {

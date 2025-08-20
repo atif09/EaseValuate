@@ -6,8 +6,7 @@ import bfsSteps from './animations/bfsSteps';
 import binarySearchSteps from './animations/binarySearchSteps';
 import subsetsTree, {nums} from './animations/subsetsTree';
 
-
-function VisualizationPanel({patternName, onHighlightLineChange}) {
+function VisualizationPanel({patternName, onStepChange, onReset, selectedLanguage}) {
   let steps = [];
   if(patternName === "Sliding Window") steps = slidingWindowSteps;
   else if(patternName === "Two Pointers") steps = twoPointersSteps;
@@ -15,20 +14,21 @@ function VisualizationPanel({patternName, onHighlightLineChange}) {
   else if(patternName === "Breadth-First Search (BFS)") steps = bfsSteps;
   else if(patternName === "Binary Search") steps = binarySearchSteps;
   
-
   const [revealCount, setRevealCount] = useState(1);
   const [step, setStep] = useState(0);
   const current = (steps && steps.length > 0 && step < steps.length) ? steps[step] : null;
 
   useEffect(() => {
-    if(steps.length && onHighlightLineChange) {
-      onHighlightLineChange(current.highlightLine);
+    if(patternName === 'Subsets (Backtracking)') {
+      setRevealCount(1);
     }
-  }, [step,steps,onHighlightLineChange,current])
+  }, [patternName]);
 
   useEffect(() => {
-    if(patternName === 'Subsets (Backtracking)') setRevealCount(1);
-  }, [patternName]);
+    if (patternName === 'Subsets (Backtracking)' && onStepChange) {
+      onStepChange(revealCount);
+    }
+  }, [revealCount, patternName, onStepChange]);
 
   const nodeRefs = useRef({});
   const containerRef= useRef(null);
@@ -40,6 +40,25 @@ function VisualizationPanel({patternName, onHighlightLineChange}) {
       requestAnimationFrame(() => setTreeReady(true));
     }
   }, [revealCount, patternName]);
+
+  const getTotalSteps = () => {
+    if (patternName === 'Subsets (Backtracking)') {
+      const maxReveal = getMaxRevealCount(subsetsTree);
+      return maxReveal;
+    }
+    return steps.length;
+  };
+
+  const getMaxRevealCount = (tree) => {
+    let count = 0;
+    function dfs(node) {
+      if (!node) return;
+      count++;
+      node.children.forEach(child => dfs(child));
+    }
+    dfs(tree);
+    return count;
+  };
  
   function getRevealedNodeIds(tree,count) {
     const ids = [];
@@ -150,9 +169,6 @@ function VisualizationPanel({patternName, onHighlightLineChange}) {
   );
 }
 
-  
-    
-
   function renderTree(node, revealedIds, currentId) {
     if (!revealedIds.includes(node.id)) return null;
     const hasChildren = node.children && node.children.length > 0;
@@ -204,8 +220,8 @@ function VisualizationPanel({patternName, onHighlightLineChange}) {
 if (patternName === "Subsets (Backtracking)") {
   const revealedIds = getRevealedNodeIds(subsetsTree, revealCount);
   const currentId = revealedIds[revealedIds.length - 1];
+  const maxSteps = getTotalSteps();
 
-  
   function collectSubsets(tree, revealedIds, arr = []) {
     if (!tree || !revealedIds.includes(tree.id)) return arr;
     if (tree.children.length === 0) arr.push(tree.curSet);
@@ -230,7 +246,10 @@ if (patternName === "Subsets (Backtracking)") {
       </div>
       <div>
         <button
-          onClick={() => setRevealCount(c => Math.max(1, c - 1))}
+          onClick={() => {
+            const newRevealCount = Math.max(1, revealCount - 1);
+            setRevealCount(newRevealCount);
+          }}
           disabled={revealCount === 1}
           style={{
             marginRight: 16,
@@ -246,8 +265,15 @@ if (patternName === "Subsets (Backtracking)") {
           Previous
         </button>
         <button
-          onClick={() => setRevealCount(c => c + 1)}
-          disabled={getRevealedNodeIds(subsetsTree, revealCount + 1).length === revealCount}
+          onClick={() => {
+            if (revealCount < maxSteps) {
+              const nextRevealCount = revealCount + 1;
+              setRevealCount(nextRevealCount);
+            } else {
+              setRevealCount(1);
+              if (onReset) onReset();
+            }
+          }}
           style={{
             padding: '0.5rem 1.2rem',
             borderRadius: 6,
@@ -255,10 +281,9 @@ if (patternName === "Subsets (Backtracking)") {
             background: '#a120ff',
             color: '#fff',
             fontWeight: 600,
-            cursor: getRevealedNodeIds(subsetsTree, revealCount + 1).length === revealCount ? 'not-allowed' : 'pointer',
-            opacity: getRevealedNodeIds(subsetsTree, revealCount + 1).length === revealCount ? 0.5 : 1
+            cursor: 'pointer'
           }}>
-          Next
+          {revealCount >= maxSteps ? 'Reset' : 'Next'}
         </button>
       </div>
     </div>
@@ -272,7 +297,6 @@ if(!steps.length || steps.length === 0 || !current) {
       </div>
     );
 }
-
   if (patternName === "Binary Search") {
   return (
     <div style={{

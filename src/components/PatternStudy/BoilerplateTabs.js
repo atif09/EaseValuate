@@ -4,7 +4,6 @@ import React, { useState, useEffect } from 'react';
 import exampleProblems from './exampleProblems';
 import patternBoilerplates from './patternBoilerplates';
 
-
 const tabNames = [
   { key: 'python', label: 'Python' },
   { key: 'cpp', label: 'C++' },
@@ -12,12 +11,12 @@ const tabNames = [
   { key: 'examples', label: 'Example Problems' }
 ];
 
-function BoilerplateTabs({ patternName, highlightLine }) {
+function BoilerplateTabs({ patternName, highlightedLines = [], selectedLanguage }) {
   const [activeTab, setActiveTab] = useState('python');
 
   useEffect(() => {
-    setActiveTab('python');
-  }, [patternName]);
+    setActiveTab(selectedLanguage);
+  }, [selectedLanguage]);
 
   return (
     <div>
@@ -121,10 +120,11 @@ function BoilerplateTabs({ patternName, highlightLine }) {
           language={activeTab === 'cpp' ? 'cpp' : activeTab}
           style={oneDark}
           wrapLines={true}
+          showLineNumbers={true}
           lineProps={lineNumber => 
-            highlightLine === lineNumber 
-            ? { style: { background: '#a120ff22', transition: 'background 0.2s'} }
-            :{}
+            highlightedLines.includes(lineNumber)
+            ? { className: 'code-line highlighted'}
+            : {className: 'code-line'}
           }
           customStyle={{
             background: 'rgba(10,13,22,0.18)',
