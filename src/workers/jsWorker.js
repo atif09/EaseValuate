@@ -9,7 +9,9 @@ self.onmessage=function(e){
   };
 
   try{
-    eval(code);
+    // Use Function constructor instead of eval for better security
+    const func = new Function(code);
+    func();
   }catch(err){
     error=err.message;
   }
@@ -29,7 +31,9 @@ function createJsWorker() {
         result += args.join(' ') + '\\n';
       };
       try {
-        eval(code);
+        // Use Function constructor instead of eval for better security
+        const func = new Function(code);
+        func();
       } catch (err) {
         error = err.message;
       }

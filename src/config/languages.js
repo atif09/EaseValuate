@@ -15,11 +15,10 @@ export const supportedLanguages = {
     
   },
   python: {
-
     name: 'Python',
+    label: 'Python',
     mode: 'python',
     defaultTemplate: `# Write your Python code here\nprint("Hello World")`,
-    
   }
 };
 
