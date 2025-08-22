@@ -19,7 +19,9 @@ function createJsWorker() {
         result += args.join(' ') + '\\n';
       };
       try {
-        eval(code);
+        // Use Function constructor instead of eval for better security
+        const func = new Function(code);
+        func();
       } catch (err) {
         error = err && err.message ? err.message : String(err);
       }
@@ -28,7 +30,11 @@ function createJsWorker() {
     };
   `;
   const blob = new Blob([code], { type: 'application/javascript' });
-  return new Worker(URL.createObjectURL(blob));
+  const blobUrl = URL.createObjectURL(blob);
+  const worker = new Worker(blobUrl);
+  // Clean up the blob URL to prevent memory leaks
+  worker.addEventListener('error', () => URL.revokeObjectURL(blobUrl));
+  return worker;
 }
 
 function createPythonWorker() {
@@ -37,7 +43,11 @@ function createPythonWorker() {
     .then(response => response.text())
     .then(code => {
       const blob = new Blob([code], { type: 'application/javascript' });
-      return new Worker(URL.createObjectURL(blob));
+      const blobUrl = URL.createObjectURL(blob);
+      const worker = new Worker(blobUrl);
+      // Clean up the blob URL to prevent memory leaks
+      worker.addEventListener('error', () => URL.revokeObjectURL(blobUrl));
+      return worker;
     });
 }
 
@@ -140,6 +150,11 @@ const LivePreview = ({ content, language }) => {
         timeoutRef.current = setTimeout(() => {
           setError('Python Error: Execution timed out (possible infinite loop / heavy computation / Pyodide is still loading).');
           setOutput('');
+          // Properly terminate the Python worker on timeout to prevent memory leaks
+          if (pythonWorkerRef.current) {
+            pythonWorkerRef.current.terminate();
+            pythonWorkerRef.current = null;
+          }
         }, 15000);
 
         pythonWorkerRef.current.postMessage(content);
