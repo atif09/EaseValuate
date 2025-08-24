@@ -1238,101 +1238,442 @@ if(!steps.length || steps.length === 0 || !current) {
 }
 
   if (patternName === "In-place Reversal of a Linked List") {
-  return (
-    <div style={{
-      display: 'flex',
-      flexDirection: 'column',
-      alignItems: 'center',
-      justifyContent: 'center',
-      height: '100%',
-      minHeight: '400px'
-    }}>
-      <h3 style={{ color: '#fff', marginBottom: 24 }}>Visualiation for: {patternName}</h3>
-      <div style={{ display: 'flex', gap: 8, marginBottom: 24 }}>
-        {current.nodes.map((num, idx) => (
-          <div
-            key={idx}
-            style={{
-              width: 48,
-              height: 48,
-              border: '2px solid #fff',
-              background: current.reversed && current.reversed.includes(num) ? '#a120ff' : 'transparent',
-              color: '#fff',
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'center',
-              fontWeight: current.curr === idx ? 700 : 400,
-              fontSize: 22,
+  const maxSteps = steps.length;
+  const info = currentStepInfo || current || {};
+
+  const renderLinkedList = () => {
+    if (!current || !current.nodes) return null;
+
+    return (
+      <div style={{
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'center',
+        gap: '0.5rem',
+        maxWidth: '800px',
+        margin: '0 auto'
+      }}>
+        {current.nodes.map((node, idx) => (
+          <div key={idx} style={{
+            display: 'flex',
+            alignItems: 'center'
+          }}>
+            <div style={{
               position: 'relative',
-              borderRadius: 8,
-              boxShadow: current.curr === idx ? '0 0 12px #a120ff88' : 'none',
-              transition: 'background 0.2s, box-shadow 0.2s'
+              display: 'flex',
+              flexDirection: 'column',
+              alignItems: 'center'
             }}>
-            {num}
-            {current.curr === idx && (
-              <span style={{
-                position: 'absolute',
-                top: -28,
-                left: 0,
-                color: '#a120ff',
+              {(current.prev === idx || current.curr === idx || current.next === idx) && (
+                <div style={{
+                  display: 'flex',
+                  flexDirection: 'column',
+                  alignItems: 'center',
+                  marginBottom: '8px',
+                  gap: '2px'
+                }}>
+                  {current.prev === idx && (
+                    <div style={{
+                      background: '#ff9800',
+                      color: '#fff',
+                      padding: '2px 6px',
+                      borderRadius: 4,
+                      fontSize: '10px',
+                      fontWeight: 700
+                    }}>
+                      PREV
+                    </div>
+                  )}
+                  {current.curr === idx && (
+                    <div style={{
+                      background: '#a120ff',
+                      color: '#fff',
+                      padding: '2px 6px',
+                      borderRadius: 4,
+                      fontSize: '10px',
+                      fontWeight: 700
+                    }}>
+                      CURR
+                    </div>
+                  )}
+                  {current.next === idx && (
+                    <div style={{
+                      background: '#4caf50',
+                      color: '#fff',
+                      padding: '2px 6px',
+                      borderRadius: 4,
+                      fontSize: '10px',
+                      fontWeight: 700
+                    }}>
+                      NEXT
+                    </div>
+                  )}
+                </div>
+              )}
+              
+              <div style={{
+                width: '50px',
+                height: '50px',
+                borderRadius: '50%',
+                border: `3px solid ${
+                  current.curr === idx ? '#a120ff' :
+                  current.prev === idx ? '#ff9800' :
+                  current.next === idx ? '#4caf50' :
+                  '#666'
+                }`,
+                background: 
+                  current.curr === idx ? 'rgba(161,32,255,0.2)' :
+                  current.prev === idx ? 'rgba(255,152,0,0.2)' :
+                  current.next === idx ? 'rgba(76,175,80,0.2)' :
+                  (current.reversed && current.reversed.includes(node)) ? 'rgba(76,175,80,0.1)' :
+                  'rgba(255,255,255,0.1)',
+                color: '#fff',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
                 fontWeight: 700,
-                fontSize: 16
-              }}>CURR</span>
+                fontSize: '16px',
+                boxShadow: 
+                  current.curr === idx ? '0 4px 12px rgba(161,32,255,0.4)' :
+                  current.prev === idx ? '0 4px 12px rgba(255,152,0,0.4)' :
+                  current.next === idx ? '0 4px 12px rgba(76,175,80,0.4)' :
+                  (current.reversed && current.reversed.includes(node)) ? '0 2px 8px rgba(76,175,80,0.2)' :
+                  'none',
+                transition: 'all 0.3s ease'
+              }}>
+                {node}
+              </div>
+            </div>
+
+            {idx < current.nodes.length - 1 && (
+              <div style={{
+                display: 'flex',
+                flexDirection: 'column',
+                alignItems: 'center',
+                margin: '0 0.25rem',
+                position: 'relative'
+              }}>
+                <div style={{
+                  fontSize: '24px',
+                  color: current.reversed && current.reversed.includes(current.nodes[idx + 1]) && current.reversed.includes(current.nodes[idx]) ? '#f44336' : '#4caf50',
+                  fontWeight: 700,
+                  transition: 'color 0.3s ease',
+                  transform: current.reversed && current.reversed.includes(current.nodes[idx + 1]) && current.reversed.includes(current.nodes[idx]) ? 'scaleX(-1)' : 'none'
+                }}>
+                  →
+                </div>
+                {current.reversed && current.reversed.includes(current.nodes[idx + 1]) && current.reversed.includes(current.nodes[idx]) && (
+                  <div style={{
+                    position: 'absolute',
+                    top: '-10px',
+                    fontSize: '12px',
+                    color: '#f44336',
+                    fontWeight: 600
+                  }}>
+                    ↶
+                  </div>
+                )}
+              </div>
             )}
-            {current.prev === idx && (
-              <span style={{
-                position: 'absolute',
-                top: -28,
-                right: 0,
-                color: '#0ff',
-                fontWeight: 700,
-                fontSize: 16
-              }}>PREV</span>
+
+            {idx === current.nodes.length - 1 && (
+              <div style={{
+                display: 'flex',
+                flexDirection: 'column',
+                alignItems: 'center',
+                margin: '0 0.25rem'
+              }}>
+                <div style={{
+                  fontSize: '24px',
+                  color: '#666',
+                  fontWeight: 700
+                }}>
+                  →
+                </div>
+                <div style={{
+                  fontSize: '12px',
+                  color: '#666',
+                  fontWeight: 600,
+                  marginTop: '2px'
+                }}>
+                  null
+                </div>
+              </div>
             )}
           </div>
         ))}
       </div>
-      {current.note && (
-        <div style={{ color: '#a120ff', fontWeight: 700, marginBottom: 12 }}>
-          {current.note}
+    );
+  };
+
+  const renderReversedList = () => {
+    if (!current || !current.reversed) return null;
+
+    return (
+      <div style={{
+        marginTop: '2rem',
+        textAlign: 'center'
+      }}>
+        <div style={{
+          fontSize: '16px',
+          fontWeight: 600,
+          marginBottom: '1rem',
+          color: '#4caf50'
+        }}>
+          Reversed Portion: {current.reversed.join(' → ')} → ...
+        </div>
+      </div>
+    );
+  };
+
+  return (
+    <div style={{ color: '#fff' }}>
+      {info && (
+        <div style={{
+          background: 'rgba(161,32,255,0.1)',
+          border: '1px solid #a120ff',
+          borderRadius: 12,
+          padding: '1rem',
+          marginBottom: '1.5rem',
+          textAlign: 'center'
+        }}>
+          <div style={{
+            fontSize: '18px',
+            fontWeight: 700,
+            marginBottom: '0.5rem',
+            color: current.curr === null ? '#4caf50' : '#a120ff'
+          }}>
+            Step {step + 1}: {current.curr === null ? 'Reversal Complete' : `Processing Node ${current.nodes[current.curr]}`}
+          </div>
+          <div style={{
+            fontSize: '14px',
+            color: '#ccc'
+          }}>
+            {current.note || ''}
+          </div>
+          
+          <div style={{
+            display: 'flex',
+            gap: '1rem',
+            justifyContent: 'center',
+            marginTop: '1rem'
+          }}>
+            <div style={{
+              background: 'rgba(35,36,58,0.6)',
+              borderRadius: 8,
+              padding: '0.5rem 1rem',
+              display: 'inline-block'
+            }}>
+              <span style={{ color: '#ccc', fontSize: '14px' }}>Nodes Reversed: </span>
+              <span style={{ color: '#4caf50', fontSize: '16px', fontWeight: 700 }}>
+                {current.reversed ? current.reversed.length : 0}
+              </span>
+            </div>
+          </div>
         </div>
       )}
-      <div>
-        <button
-          onClick={() => setStep(s => Math.max(0, s - 1))}
-          disabled={step === 0}
-          style={{
-            marginRight: 16,
-            padding: '0.5rem 1.2rem',
-            borderRadius: 6,
-            border: 'none',
-            background: '#23243a',
-            color: '#fff',
-            fontWeight: 600,
-            cursor: step === 0 ? 'not-allowed' : 'pointer',
-            opacity: step === 0 ? 0.5 : 1
+
+      <div ref={containerRef} style={{
+        background: 'rgba(10,13,22,0.3)',
+        borderRadius: 12,
+        padding: '1.5rem',
+        border: '1px solid rgba(161,32,255,0.2)'
+      }}>
+
+        <div style={{
+          display: 'flex',
+          justifyContent: 'center',
+          marginBottom: '2rem',
+          minHeight: '120px',
+          alignItems: 'center'
+        }}>
+          {renderLinkedList()}
+        </div>
+
+        {renderReversedList()}
+
+        {current && (
+          <div style={{
+            display: 'flex',
+            justifyContent: 'center',
+            gap: '1rem',
+            marginBottom: '2rem',
+            flexWrap: 'wrap'
           }}>
-          Previous
-        </button>
-        <button
-          onClick={() => setStep(s => Math.min(steps.length - 1, s + 1))}
-          disabled={step === steps.length - 1}
-          style={{
-            padding: '0.5rem 1.2rem',
-            borderRadius: 6,
-            border: 'none',
-            background: '#a120ff',
-            color: '#fff',
-            fontWeight: 600,
-            cursor: step === steps.length - 1 ? 'not-allowed' : 'pointer',
-            opacity: step === steps.length - 1 ? 0.5 : 1
+            <div style={{
+              background: 'rgba(35,36,58,0.6)',
+              borderRadius: 12,
+              padding: '1rem 1.5rem',
+              minWidth: '140px',
+              textAlign: 'center'
+            }}>
+              <div style={{
+                fontSize: '14px',
+                fontWeight: 600,
+                marginBottom: '0.5rem',
+                color: '#ff9800'
+              }}>
+                PREV Pointer
+              </div>
+              <div style={{
+                fontSize: '20px',
+                fontWeight: 700,
+                color: '#fff'
+              }}>
+                {current.prev !== undefined && current.prev !== null ? 
+                  `${current.nodes[current.prev]}` : 'null'}
+              </div>
+            </div>
+
+            <div style={{
+              background: 'rgba(35,36,58,0.6)',
+              borderRadius: 12,
+              padding: '1rem 1.5rem',
+              minWidth: '140px',
+              textAlign: 'center'
+            }}>
+              <div style={{
+                fontSize: '14px',
+                fontWeight: 600,
+                marginBottom: '0.5rem',
+                color: '#a120ff'
+              }}>
+                CURR Pointer
+              </div>
+              <div style={{
+                fontSize: '20px',
+                fontWeight: 700,
+                color: '#fff'
+              }}>
+                {current.curr !== undefined && current.curr !== null ? 
+                  `${current.nodes[current.curr]}` : 'null'}
+              </div>
+            </div>
+
+            <div style={{
+              background: 'rgba(35,36,58,0.6)',
+              borderRadius: 12,
+              padding: '1rem 1.5rem',
+              minWidth: '140px',
+              textAlign: 'center'
+            }}>
+              <div style={{
+                fontSize: '14px',
+                fontWeight: 600,
+                marginBottom: '0.5rem',
+                color: '#4caf50'
+              }}>
+                NEXT Pointer
+              </div>
+              <div style={{
+                fontSize: '20px',
+                fontWeight: 700,
+                color: '#fff'
+              }}>
+                {current.next !== undefined && current.next !== null ? 
+                  `${current.nodes[current.next]}` : 'null'}
+              </div>
+            </div>
+          </div>
+        )}
+
+        {current && (
+          <div style={{
+            background: 'rgba(35,36,58,0.6)',
+            borderRadius: 12,
+            padding: '1.5rem',
+            marginBottom: '2rem',
+            textAlign: 'center'
           }}>
-          Next
-        </button>
+            <div style={{
+              fontSize: '18px',
+              fontWeight: 600,
+              marginBottom: '1rem',
+              color: '#a120ff'
+            }}>
+              Current Operation
+            </div>
+            <div style={{
+              fontSize: '16px',
+              fontWeight: 600,
+              marginBottom: '0.5rem',
+              color: '#fff',
+              fontFamily: 'monospace'
+            }}>
+              {current.curr !== null && current.curr !== undefined ? 
+                `curr.next = prev; prev = curr; curr = next` :
+                'return prev (new head of reversed list)'}
+            </div>
+            <div style={{
+              fontSize: '14px',
+              fontWeight: 500,
+              color: current.curr === null ? '#4caf50' : '#ff9800'
+            }}>
+              {current.curr === null ? 'All nodes reversed successfully' : 'Reversing pointer direction'}
+            </div>
+          </div>
+        )}
+
+        <div style={{
+          display: 'flex',
+          justifyContent: 'center',
+          gap: '1rem'
+        }}>
+          <button
+            onClick={() => {
+              const prev = Math.max(0, step - 1);
+              setStep(prev);
+              if (onStepChange) onStepChange(prev + 1);
+            }}
+            disabled={step === 0}
+            style={{
+              padding: '0.75rem 1.5rem',
+              borderRadius: 8,
+              border: 'none',
+              background: step === 0 ? 'rgba(255,255,255,0.1)' : '#6c757d',
+              color: '#fff',
+              fontWeight: 600,
+              fontSize: '14px',
+              cursor: step === 0 ? 'not-allowed' : 'pointer',
+              opacity: step === 0 ? 0.5 : 1
+            }}
+          >
+            ← Previous
+          </button>
+
+          <button
+            onClick={() => {
+              if (step < maxSteps - 1) {
+                const next = step + 1;
+                setStep(next);
+                if (onStepChange) onStepChange(next + 1);
+              } else {
+                setStep(0);
+                if (onReset) onReset();
+                if (onStepChange) onStepChange(1);
+              }
+            }}
+            style={{
+              padding: '0.75rem 1.5rem',
+              borderRadius: 8,
+              border: 'none',
+              background: step >= maxSteps - 1 ? '#dc3545' : '#a120ff',
+              color: '#fff',
+              fontWeight: 600,
+              fontSize: '14px',
+              cursor: 'pointer',
+              boxShadow: '0 2px 8px rgba(161,32,255,0.3)'
+            }}
+          >
+            {step >= maxSteps - 1 ? 'Reset' : 'Next →'}
+          </button>
+        </div>
       </div>
     </div>
   );
 }
+
+              
   if (patternName === "Two Pointers") {
   const maxSteps = steps.length;
   const info = currentStepInfo || current || {};
@@ -1635,112 +1976,307 @@ if(!steps.length || steps.length === 0 || !current) {
 }
 
   if (patternName === "Sliding Window") {
-    return (
-      <div style={{
-        display: 'flex',
-        flexDirection: 'column',
-        alignItems: 'center',
-        justifyContent: 'flex-start',
-        height: '100%',
-        minHeight: '400px',
-        paddingTop: '0'
-      }}>
-        {/* Step Info Display - At the same level as the template banner */}
-        {currentStepInfo && (
-          <div style={{
-            background: 'rgba(161, 32, 255, 0.1)',
-            border: '1px solid #a120ff',
-            borderRadius: 12,
-            padding: '1rem',
-            marginBottom: '2rem',
-            textAlign: 'center',
-            width: '100%',
-            maxWidth: '600px',
-            marginTop: '0'
-          }}>
-            <div style={{
-              fontSize: '16px',
-              fontWeight: 700,
-              marginBottom: '0.5rem',
-              color: currentStepInfo.operation === 'expand' ? '#00e676' : 
-                     currentStepInfo.operation === 'shrink' ? '#ff5722' :
-                     currentStepInfo.operation === 'duplicate_found' ? '#ffeb3b' :
-                     currentStepInfo.operation === 'initialize' ? '#a120ff' : '#a120ff'
-            }}>
-              Step {currentStepInfo.step}: {currentStepInfo.title}
-            </div>
-            <div style={{ fontSize: '14px', color: '#ccc' }}>
-              {currentStepInfo.description}
-            </div>
-          </div>
-        )}
-        
-        <h3 style={{ color: '#fff', marginBottom: 24 }}>Visualization for: {patternName}</h3>
+  const maxSteps = steps.length;
+  const info = currentStepInfo || current || {};
 
-        {/* Array Visualization */}
-        <div style={{ display: 'flex', gap: 8, marginBottom: 24 }}>
-          {current.arr.map((num, idx) => (
-            <div
-              key={idx}
-              style={{
-                width: 48,
-                height: 48,
-                border: '2px solid #fff',
-                background: idx >= current.LEFT && idx <= current.RIGHT ? '#a120ff' : 'transparent',
-                color: '#fff',
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'center',
-                fontWeight: idx === current.LEFT || idx === current.RIGHT ? 700 : 400,
-                fontSize: 22,
-                position: 'relative',
-                borderRadius: 8,
-                boxShadow: idx >= current.LEFT && idx <= current.RIGHT ? '0 0 12px #a120ff88' : 'none',
-                transition: 'background 0.2s, box-shadow 0.2s'
-              }}>
-              {num}
-              {idx === current.LEFT && (
-                <span style={{
-                  position: 'absolute',
-                  top: -28,
-                  left: 0,
-                  color: '#a120ff',
-                  fontWeight: 700,
-                  fontSize: 16
-                }}>LEFT</span>
-              )}
-              {idx === current.RIGHT && (
-                <span style={{
-                  position: 'absolute',
-                  top: -28,
-                  right: 0,
-                  color: '#a120ff',
-                  fontWeight: 700,
-                  fontSize: 16
-                }}>RIGHT</span>
-              )}
-            </div>
-          ))}
-        </div>
-
-        {/* Window Info */}
+  return (
+    <div style={{ color: '#fff' }}>
+      {info && (
         <div style={{
-          background: 'rgba(35, 36, 58, 0.4)',
+          background: 'rgba(161,32,255,0.1)',
+          border: '1px solid #a120ff',
           borderRadius: 12,
           padding: '1rem',
           marginBottom: '1.5rem',
           textAlign: 'center'
         }}>
-          <div style={{ color: '#fff', marginBottom: 8 }}>
-            <strong>Window Contents:</strong> [{current.window.join(', ')}]
+          <div style={{
+            fontSize: '18px',
+            fontWeight: 700,
+            marginBottom: '0.5rem',
+            color: info.operation === 'expand' ? '#4caf50' : 
+                   info.operation === 'shrink' ? '#ff9800' :
+                   info.operation === 'duplicate_found' ? '#f44336' :
+                   info.operation === 'initialize' ? '#2196f3' :
+                   '#a120ff'
+          }}>
+            Step {step + 1}: {info.title || (info.step ? `Step ${info.step}` : `Step ${step + 1}`)}
           </div>
-          <div style={{ color: '#ccc', fontSize: '14px' }}>
-            Window Size: {current.RIGHT - current.LEFT + 1} | k: {current.k} | 
-            LEFT: {current.LEFT} | RIGHT: {current.RIGHT}
+          <div style={{
+            fontSize: '14px',
+            color: '#ccc'
+          }}>
+            {info.description || ''}
+          </div>
+          
+          <div style={{
+            display: 'flex',
+            gap: '1rem',
+            justifyContent: 'center',
+            marginTop: '1rem'
+          }}>
+            <div style={{
+              background: 'rgba(35,36,58,0.6)',
+              borderRadius: 8,
+              padding: '0.5rem 1rem',
+              display: 'inline-block'
+            }}>
+              <span style={{ color: '#ccc', fontSize: '14px' }}>Window Size (k): </span>
+              <span style={{ color: '#a120ff', fontSize: '16px', fontWeight: 700 }}>
+                {info.k || current.k}
+              </span>
+            </div>
+            <div style={{
+              background: 'rgba(35,36,58,0.6)',
+              borderRadius: 8,
+              padding: '0.5rem 1rem',
+              display: 'inline-block'
+            }}>
+              <span style={{ color: '#ccc', fontSize: '14px' }}>Current Size: </span>
+              <span style={{ color: '#4caf50', fontSize: '16px', fontWeight: 700 }}>
+                {current.RIGHT !== undefined && current.LEFT !== undefined ? 
+                  Math.max(0, current.RIGHT - current.LEFT + 1) : 0}
+              </span>
+            </div>
           </div>
         </div>
+      )}
 
+      <div ref={containerRef} style={{
+        background: 'rgba(10,13,22,0.3)',
+        borderRadius: 12,
+        padding: '1.5rem',
+        border: '1px solid rgba(161,32,255,0.2)'
+      }}>
 
+        {/* Array Visualization */}
+        <div style={{
+          display: 'flex',
+          justifyContent: 'center',
+          marginBottom: '2rem'
+        }}>
+          {current && Array.isArray(current.arr) ? (
+            <div style={{
+              display: 'flex',
+              gap: '0.5rem',
+              alignItems: 'center',
+              justifyContent: 'center'
+            }}>
+              {current.arr.map((num, idx) => {
+                const isLeft = current.LEFT === idx;
+                const isRight = current.RIGHT === idx;
+                const inWindow = idx >= current.LEFT && idx <= current.RIGHT;
+                const isDuplicate = current.window && current.window.filter(x => x === num).length > 1;
+                
+                return (
+                  <div key={idx} style={{
+                    position: 'relative',
+                    display: 'flex',
+                    flexDirection: 'column',
+                    alignItems: 'center'
+                  }}>
+                    {/* Top Labels */}
+                    {(isLeft || isRight) && (
+                      <div style={{
+                        display: 'flex',
+                        flexDirection: 'column',
+                        alignItems: 'center',
+                        marginBottom: '8px'
+                      }}>
+                        {isLeft && (
+                          <div style={{
+                            background: '#2196f3',
+                            color: '#fff',
+                            padding: '3px 8px',
+                            borderRadius: 6,
+                            fontSize: '11px',
+                            fontWeight: 700,
+                            marginBottom: '2px'
+                          }}>
+                            LEFT
+                          </div>
+                        )}
+                        {isRight && (
+                          <div style={{
+                            background: '#4caf50',
+                            color: '#fff',
+                            padding: '3px 8px',
+                            borderRadius: 6,
+                            fontSize: '11px',
+                            fontWeight: 700,
+                            marginBottom: '2px'
+                          }}>
+                            RIGHT
+                          </div>
+                        )}
+                      </div>
+                    )}
+                    
+                    {/* Array Element */}
+                    <div style={{
+                      width: '60px',
+                      height: '60px',
+                      borderRadius: 12,
+                      border: `3px solid ${
+                        isDuplicate && inWindow ? '#f44336' :
+                        inWindow ? '#a120ff' :
+                        'rgba(255,255,255,0.3)'
+                      }`,
+                      background: 
+                        isDuplicate && inWindow ? 'rgba(244,67,54,0.2)' :
+                        inWindow ? 'rgba(161,32,255,0.2)' :
+                        'rgba(255,255,255,0.05)',
+                      color: '#fff',
+                      display: 'flex',
+                      alignItems: 'center',
+                      justifyContent: 'center',
+                      fontWeight: inWindow ? 700 : 400,
+                      fontSize: '18px',
+                      boxShadow: 
+                        isDuplicate && inWindow ? '0 4px 12px rgba(244,67,54,0.4)' :
+                        inWindow ? '0 4px 12px rgba(161,32,255,0.3)' : 'none',
+                      opacity: 1,
+                      transition: 'all 0.3s ease'
+                    }}>
+                      {num}
+                    </div>
+                    
+                    {/* Index Label */}
+                    <div style={{
+                      fontSize: '12px',
+                      color: inWindow ? '#a120ff' : '#666',
+                      marginTop: '4px',
+                      fontWeight: 600
+                    }}>
+                      [{idx}]
+                    </div>
+                  </div>
+                );
+              })}
+            </div>
+          ) : (
+            <div style={{ color: '#bfb3ff' }}>No array data available</div>
+          )}
+        </div>
+
+        {/* Pointer Status Panels */}
+        {current && (
+          <div style={{
+            display: 'flex',
+            justifyContent: 'center',
+            gap: '2rem',
+            marginBottom: '2rem'
+          }}>
+            <div style={{
+              background: 'rgba(35,36,58,0.6)',
+              borderRadius: 12,
+              padding: '1rem 1.5rem',
+              minWidth: '160px',
+              textAlign: 'center'
+            }}>
+              <div style={{
+                fontSize: '16px',
+                fontWeight: 600,
+                marginBottom: '0.5rem',
+                color: '#2196f3'
+              }}>
+                LEFT Pointer
+              </div>
+              <div style={{
+                fontSize: '24px',
+                fontWeight: 700,
+                color: '#fff'
+              }}>
+                Index: {current.LEFT !== undefined ? current.LEFT : '-'}
+              </div>
+              <div style={{
+                fontSize: '16px',
+                color: '#ccc'
+              }}>
+                Value: {current.arr && current.LEFT !== undefined ? current.arr[current.LEFT] : '-'}
+              </div>
+            </div>
+
+            <div style={{
+              background: 'rgba(35,36,58,0.6)',
+              borderRadius: 12,
+              padding: '1rem 1.5rem',
+              minWidth: '160px',
+              textAlign: 'center'
+            }}>
+              <div style={{
+                fontSize: '16px',
+                fontWeight: 600,
+                marginBottom: '0.5rem',
+                color: '#4caf50'
+              }}>
+                RIGHT Pointer
+              </div>
+              <div style={{
+                fontSize: '24px',
+                fontWeight: 700,
+                color: '#fff'
+              }}>
+                Index: {current.RIGHT !== undefined ? current.RIGHT : '-'}
+              </div>
+              <div style={{
+                fontSize: '16px',
+                color: '#ccc'
+              }}>
+                Value: {current.arr && current.RIGHT !== undefined ? current.arr[current.RIGHT] : '-'}
+              </div>
+            </div>
+          </div>
+        )}
+
+        {/* Window Contents Display */}
+        {current && current.window && (
+          <div style={{
+            background: 'rgba(35,36,58,0.6)',
+            borderRadius: 12,
+            padding: '1.5rem',
+            marginBottom: '2rem',
+            textAlign: 'center'
+          }}>
+            <div style={{
+              fontSize: '18px',
+              fontWeight: 600,
+              marginBottom: '1rem',
+              color: '#a120ff'
+            }}>
+              Current Window Contents
+            </div>
+            <div style={{
+              fontSize: '20px',
+              fontWeight: 700,
+              marginBottom: '0.5rem',
+              color: '#fff',
+              fontFamily: 'monospace'
+            }}>
+              [{current.window.join(', ')}]
+            </div>
+            <div style={{
+              fontSize: '14px',
+              color: '#ccc',
+              marginBottom: '1rem'
+            }}>
+              Window Size: {current.window.length} / k = {current.k}
+            </div>
+            <div style={{
+              fontSize: '16px',
+              fontWeight: 600,
+              color: current.operation === 'duplicate_found' ? '#f44336' :
+                     current.window.length > current.k ? '#ff9800' :
+                     current.window.length === current.k ? '#4caf50' :
+                     '#2196f3'
+            }}>
+              {current.operation === 'duplicate_found' ? 'Duplicate Found!' :
+               current.window.length > current.k ? 'Window too large - need to shrink' :
+               current.window.length === current.k ? 'Window at optimal size' :
+               '➕ Building window...'}
+            </div>
+          </div>
+        )}
 
         {/* Navigation Buttons */}
         <div style={{
@@ -1750,150 +2286,56 @@ if(!steps.length || steps.length === 0 || !current) {
         }}>
           <button
             onClick={() => {
-              const newStep = Math.max(0, step - 1);
-              setStep(newStep);
-              if (onStepChange) onStepChange(newStep + 1);
+              const prev = Math.max(0, step - 1);
+              setStep(prev);
+              if (onStepChange) onStepChange(prev + 1);
             }}
             disabled={step === 0}
             style={{
               padding: '0.75rem 1.5rem',
               borderRadius: 8,
               border: 'none',
-              background: step === 0 ? '#333' : '#555',
-              color: step === 0 ? '#666' : '#fff',
+              background: step === 0 ? 'rgba(255,255,255,0.1)' : '#6c757d',
+              color: '#fff',
               fontWeight: 600,
               fontSize: '14px',
               cursor: step === 0 ? 'not-allowed' : 'pointer',
-              transition: 'all 0.2s ease'
-            }}>
+              opacity: step === 0 ? 0.5 : 1
+            }}
+          >
             ← Previous
           </button>
+
           <button
             onClick={() => {
-              if (step < steps.length - 1) {
-                const nextStep = step + 1;
-                setStep(nextStep);
-                if (onStepChange) onStepChange(nextStep + 1);
+              if (step < maxSteps - 1) {
+                const next = step + 1;
+                setStep(next);
+                if (onStepChange) onStepChange(next + 1);
               } else {
                 setStep(0);
                 if (onReset) onReset();
+                if (onStepChange) onStepChange(1);
               }
             }}
             style={{
               padding: '0.75rem 1.5rem',
               borderRadius: 8,
               border: 'none',
-              background: step >= steps.length - 1 ? '#ff5722' : '#a120ff',
+              background: step >= maxSteps - 1 ? '#dc3545' : '#a120ff',
               color: '#fff',
               fontWeight: 600,
               fontSize: '14px',
               cursor: 'pointer',
-              transition: 'all 0.2s ease',
-              boxShadow: '0 2px 8px rgba(161, 32, 255, 0.3)'
-            }}>
-            {step >= steps.length - 1 ? '🔄 Reset' : 'Next →'}
+              boxShadow: '0 2px 8px rgba(161,32,255,0.3)'
+            }}
+          >
+            {step >= maxSteps - 1 ? '🔄 Reset' : 'Next →'}
           </button>
         </div>
-      </div>
-    );
-  }
-
-  return (
-    <div style={{
-      display: 'flex',
-      flexDirection: 'column',
-      alignItems: 'center',
-      justifyContent: 'center',
-      height: '100%',
-      minHeight: '400px'}}>
-      <h3 style={{color: '#fff', marginBottom: 24}}>Visualization for: {patternName}</h3>
-      <div style={{display: 'flex', gap: 8,marginBottom: 24}}>
-        {current.array.map((num,idx) => (
-          <div
-          key={idx}
-          style={{
-            width:48,
-            height:48,
-            border: '2px solid #fff',
-            background: current.window.includes(idx) ? '#a120ff' : 'transparent',
-            color: '#fff',
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'center',
-            fontWeight: current.L === idx || current.R === idx ? 700 : 400,
-            fontSize: 22,
-            position: 'relative',
-            borderRadius: 8,
-            boxShadow: current.window.includes(idx) ? '0 0 12px #a120ff88' : 'none',
-            transition: 'background 0.2s, box-shadow 0.2s'
-          }}>
-            {num}
-            {current.L === idx && (
-              <span style={{
-                position: 'absolute',
-                top: -28,
-                left: 0,
-                color: '#a120ff',
-                fontWeight: 700,
-                fontSize: 16
-              }}>LEFT</span>
-            )}
-            {current.R === idx && (
-              <span style={{
-                position: 'absolute',
-                top: -28,
-                right: 0,
-                color: '#a120ff', 
-                fontWeight: 700,
-                fontSize: 16
-              }}>RIGHT</span>
-            )}
-            </div>
-        ))}
-      </div>
-      <div style={{color: '#fff', marginBottom: 12}}>
-        Hashset: {'{'}{current.hashset.join(', ')}{'}'}
-      </div>
-      {current.note && (
-        <div style={{color: '#a120ff', fontWeight: 700, marginBottom: 12}}>
-          {current.note}
-        </div>
-      )}
-      <div>
-        <button
-        onClick={() => setStep( s => Math.max(0, s-1))}
-        disabled={step===0}
-        style={{
-          marginRight: 16,
-          padding: '0.5rem 1.2rem',
-          borderRadius: 6,
-          border:'none',
-          background: '#23243a',
-          color: '#fff',
-          fontWeight: 600,
-          cursor: step === 0 ? 'not-allowed' : 'pointer',
-          opacity: step === 0 ? 0.5 : 1
-        }}>
-          Previous
-        </button>
-        <button
-        onClick={() => setStep(s => Math.min(steps.length - 1, s+1))}
-        disabled={step === steps.length - 1}
-        style={{
-          padding: '0.5rem 1.2rem',
-          borderRadius: 6,
-          border: 'none',
-          background: '#a120ff',
-          color: '#fff',
-          fontWeight: 600,
-          cursor: step === steps.length -1 ? 'not-allowed' : 'pointer',
-          opacity: step === steps.length -1 ? 0.5 : 1
-        }}>
-          Next
-        </button>
       </div>
     </div>
   );
 }
-
+}
 export default VisualizationPanel;
