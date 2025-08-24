@@ -1,6 +1,7 @@
-import React from 'react';
+import React, { useState } from 'react';
 import patterns from './patternList';
-import {useNavigate} from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
+import DFSSubmenu from './DFSSubmenu';
 
 const hoverBg = '#23243a';
 const purple = '#a120ff';
@@ -32,10 +33,53 @@ const patternItemStyle = (hovered) => ({
   transition: 'background 0.18s',
   background: hovered ? hoverBg : 'transparent',
   fontFamily: `'Inter', 'Montserrat', 'Segoe UI', Arial, sans-serif`,
+  position: 'relative',
+  display: 'flex',
+  alignItems: 'center',
+  justifyContent: 'space-between'
 });
+
+const arrowStyle = {
+  fontSize: '12px',
+  color: '#a120ff',
+  transition: 'transform 0.2s ease'
+};
 
 function PatternDropdown({ hoveredIndex, setHoveredIndex, onPatternSelect }) {
   const navigate = useNavigate();
+  const [showDFSSubmenu, setShowDFSSubmenu] = useState(false);
+  const [hoveredSubmenuIndex, setHoveredSubmenuIndex] = useState(-1);
+
+  const handlePatternClick = (pattern, idx) => {
+    if (pattern === "Depth-First Search (DFS)") {
+      setShowDFSSubmenu(!showDFSSubmenu);
+      return;
+    }
+    
+    navigate(`/pattern/${encodeURIComponent(pattern)}`);
+    if (onPatternSelect) onPatternSelect();
+  };
+
+  const handleMouseEnter = (idx) => {
+    setHoveredIndex(idx);
+    if (patterns[idx] === "Depth-First Search (DFS)") {
+      setShowDFSSubmenu(true);
+    } else {
+      setShowDFSSubmenu(false);
+    }
+  };
+
+  const handleMouseLeave = () => {
+    setHoveredIndex(-1);
+    
+  };
+
+  const handleSubmenuClose = () => {
+    setShowDFSSubmenu(false);
+    setHoveredSubmenuIndex(-1);
+    if (onPatternSelect) onPatternSelect();
+  };
+
   return (
     <div style={dropdownStyle}>
       <style>
@@ -56,20 +100,27 @@ function PatternDropdown({ hoveredIndex, setHoveredIndex, onPatternSelect }) {
         {patterns.map((pattern, idx) => (
           <div
             key={pattern}
-            style={patternItemStyle(hoveredIndex===idx)}
-            onMouseEnter={() => setHoveredIndex(idx)}
-            onMouseLeave={() => setHoveredIndex(-1)}
-            onClick={() => {
-              navigate(`/pattern/${encodeURIComponent(pattern)}`);
-              if(onPatternSelect) onPatternSelect();
-            }}
- 
+            style={patternItemStyle(hoveredIndex === idx)}
+            onMouseEnter={() => handleMouseEnter(idx)}
+            onMouseLeave={handleMouseLeave}
+            onClick={() => handlePatternClick(pattern, idx)}
           >
-            {pattern}
+            <span>{pattern}</span>
+            {pattern === "Depth-First Search (DFS)" && (
+              <span style={arrowStyle}>▶</span>
+            )}
+            
+            
+            {pattern === "Depth-First Search (DFS)" && showDFSSubmenu && (
+              <DFSSubmenu
+                hoveredSubmenuIndex={hoveredSubmenuIndex}
+                setHoveredSubmenuIndex={setHoveredSubmenuIndex}
+                onOptionSelect={handleSubmenuClose}
+              />
+            )}
           </div>
         ))}
       </div>
-    
     </div>
   );
 }

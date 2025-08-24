@@ -276,6 +276,9 @@ const patternBoilerplates = {
 }`
 
   },
+  "Depth-First Search (DFS)" : {
+    python: ``
+  }
 
 };
 
