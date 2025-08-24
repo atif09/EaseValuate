@@ -14,11 +14,9 @@ const patternBoilerplates = {
         
     return False
 `,
-    cpp: `
-bool closeDuplicates(vector<int>& nums, int k) {
+    cpp: `bool closeDuplicates(vector<int>& nums, int k) {
     unordered_set<int> window;
     int LEFT = 0;
-
     for (int RIGHT = 0; RIGHT < nums.size(); RIGHT++) {
         if (RIGHT - LEFT + 1 > k) {
             window.erase(nums[LEFT]);
@@ -29,12 +27,10 @@ bool closeDuplicates(vector<int>& nums, int k) {
         }
         window.insert(nums[RIGHT]);
     }
-
     return false;
 }`,
 
-    java: `
-public static boolean closeDuplicates(int[] nums, int k) {
+    java: `public static boolean closeDuplicates(int[] nums, int k) {
     HashSet<Integer> window = new HashSet<>();
     int LEFT = 0;
 
@@ -249,30 +245,36 @@ public static boolean closeDuplicates(int[] nums, int k) {
     helper(i + 1, nums, curSet, subsets)
     curSet.pop()
     
-    helper(i + 1, nums, curSet, subsets)
-`,
+    helper(i + 1, nums, curSet, subsets)`,
+    
     cpp: `void helper(int i, vector<int>& nums, vector<int>& curSet,
     vector<vector<int>>& subsets) {
         if (i >= nums.size()) {
             subsets.push_back(vector<int>(curSet));
             return;
         }
+        
         curSet.push_back(nums[i]);
         helper(i + 1, nums, curSet, subsets);
         curSet.pop_back();
+        
         helper(i + 1, nums, curSet, subsets);
 }`,
+    
     java: `public static void helper(int i, int[] nums, List<Integer> curSet,
     List<List<Integer>> subsets) {
         if (i >= nums.length) {
             subsets.add(new ArrayList<>(curSet));
             return;
         }
+        
         curSet.add(nums[i]);
         helper(i + 1, nums, curSet, subsets);
         curSet.remove(curSet.size() - 1);
-        helper(i + 1, nums, curSet, subsets)
-    }`,
+        
+        helper(i + 1, nums, curSet, subsets);
+}`
+
   },
 
 };

@@ -13,7 +13,7 @@ import{HeaderContainer,
 const Header = () => {
   const [displayText, setDisplayText] = useState('');
   const [typingComplete, setTypingComplete] = useState(false);
-  const fullText = 'Live';
+  const fullText = 'EaseValuate';
 
   useEffect(() => {
     

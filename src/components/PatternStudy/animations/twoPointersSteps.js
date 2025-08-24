@@ -5,7 +5,7 @@ const twoPointersSteps = [
     right: 3,
     target: 9,
     sum: 17,
-    note: "left=0, right=3, sum=17 > target, move right--",
+    note: "Start: LEFT at 0, RIGHT at 5",
     hightlightLine: 6
   },
   {
@@ -14,7 +14,7 @@ const twoPointersSteps = [
     right: 2,
     target: 9,
     sum: 13,
-    note: "left=0, right=2, sum=13 > target, move right--",
+    note: "Move LEFT pointer to 1",
     highlightLine: 6
   },
   {
@@ -23,7 +23,7 @@ const twoPointersSteps = [
     right: 1,
     target: 9,
     sum: 9,
-    note: "left=0, right=1, sum=9 == target, found!",
+    note: "Move RIGHT pointer to 4",
     highlightLine: 8
   }
   
