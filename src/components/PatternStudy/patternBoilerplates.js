@@ -668,35 +668,39 @@ const patternBoilerplates = {
 }`,
   },
   "1-Dimension DP": {
-    python: `def dp_1d(arr):
-    n = len(arr)
-    if n == 0:
+    python: `def rob(nums):
+    if not nums:
         return 0
-    dp = [0] * n
-    dp[0] = arr[0]  # Base case
-    for i in range(1, n):
-        dp[i] = max(dp[i-1], arr[i])
-    return dp[n-1]
+    if len(nums) == 1:
+        return nums[0]
+    dp = [0] * len(nums)
+    dp[0] = nums[0]  # Base case: rob first house
+    dp[1] = max(nums[0], nums[1])
+    for i in range(2, len(nums)):
+        dp[i] = max(dp[i-1], dp[i-2] + nums[i])
+    return dp[len(nums)-1]
 `,
-    cpp: `int dp1D(vector<int>& arr) {
-    int n = arr.size();
-    if(n == 0) return 0;
-    vector<int> dp(n);
-    dp[0] = arr[0];  // Base case
-    for(int i = 1; i < n; i++) {
-        dp[i] = max(dp[i-1], arr[i]);
+    cpp: `int rob(vector<int>& nums) {
+    if(nums.empty()) return 0;
+    if(nums.size() == 1) return nums[0];
+    vector<int> dp(nums.size());
+    dp[0] = nums[0];  
+    dp[1] = max(nums[0], nums[1]);  
+    for(int i = 2; i < nums.size(); i++) {
+        dp[i] = max(dp[i-1], dp[i-2] + nums[i]);  
     }
-    return dp[n-1];
+    return dp[nums.size()-1];
 }`,
-    java: `public int dp1D(int[] arr) {
-    int n = arr.length;
-    if(n == 0) return 0;
-    int[] dp = new int[n];
-    dp[0] = arr[0];  // Base case
-    for(int i = 1; i < n; i++) {
-        dp[i] = Math.max(dp[i-1], arr[i]);
+    java: `public int rob(int[] nums) {
+    if(nums.length == 0) return 0;
+    if(nums.length == 1) return nums[0];
+    int[] dp = new int[nums.length];
+    dp[0] = nums[0];  
+    dp[1] = Math.max(nums[0], nums[1]);  
+    for(int i = 2; i < nums.length; i++) {
+        dp[i] = Math.max(dp[i-1], dp[i-2] + nums[i]);  
     }
-    return dp[n-1];
+    return dp[nums.length-1];
 }`
   },
 
