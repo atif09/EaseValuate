@@ -15,6 +15,7 @@ import greedySteps from './animations/greedySteps';
 import inorderSteps from './animations/inorderSteps';
 import preorderSteps from './animations/preorderSteps';
 import postorderSteps from './animations/postorderSteps';
+import dp1DSteps from './animations/dp1DSteps';
 
 function VisualizationPanel({patternName, onStepChange, onReset, selectedLanguage, currentStepInfo}) {
   let steps = [];
@@ -33,6 +34,7 @@ function VisualizationPanel({patternName, onStepChange, onReset, selectedLanguag
   else if(patternName === "Inorder Traversal (DFS)") steps = inorderSteps;
   else if(patternName === "Preorder Traversal (DFS)") steps = preorderSteps;
   else if(patternName === "Postorder Traversal (DFS)") steps = postorderSteps;
+  else if(patternName === "1-Dimension DP") steps = dp1DSteps;
 
   const [revealCount, setRevealCount] = useState(1);
   const [step, setStep] = useState(0);
@@ -7435,6 +7437,8 @@ if (patternName === "Inorder Traversal (DFS)") {
     </div>
   );
 }
+
+  
 
   if (patternName === "Sliding Window") {
   const maxSteps = steps.length;
