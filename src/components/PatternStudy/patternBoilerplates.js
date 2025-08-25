@@ -241,7 +241,7 @@ const patternBoilerplates = {
     preorder(root.right);
 }`
   },
-  "Postorder Traversal": {
+  "Postorder Traversal (DFS)": {
     python: `def postorder(root):
     if not root:
         return
