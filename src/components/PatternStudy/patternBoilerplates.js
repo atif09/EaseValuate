@@ -191,6 +191,81 @@ const patternBoilerplates = {
     }
 }`,
   },
+  "Inorder Traversal (DFS)": {
+    python: `def inorder(root):
+    if not root:
+        return
+    inorder(root.left)
+    print(root.val)
+    inorder(root.right)
+`,
+    cpp: `void inorder(TreeNode* root) {
+    if(!root) {
+        return;
+    }
+    inorder(root->left);
+    cout << root->val_ << endl;
+    inorder(root->right);
+}`,
+    java: `public void inorder(TreeNode root) {
+    if(root == null) {
+        return;
+    }
+    inorder(root.left);
+    System.out.println(root.val);
+    inorder(root.right);
+}`,
+  },
+  "Preorder Traversal (DFS)": {
+    python: `def preorder(root):
+    if not root: 
+        return
+    print(root.val)
+    preorder(root.left)
+    preorder(root.right)
+`,
+    cpp: `void preorder(TreeNode* root) {
+    if (!root) {
+        return;
+    }
+    cout << root->val_ << endl;
+    preorder(root->left);
+    preorder(root->right);
+}`,
+    java: `public void preorder(TreeNode root) {
+    if (root == null) {
+        return;
+    }
+    System.out.println(root.val);
+    preorder(root.left);
+    preorder(root.right);
+}`
+  },
+  "Postorder Traversal": {
+    python: `def postorder(root):
+    if not root:
+        return
+    postorder(root.left)
+    postorder(root.right)
+    print(root.val)
+`,
+    cpp: `void postorder(TreeNode* root) {
+    if (!root) {
+        return;
+    }
+    postorder(root->left);
+    postorder(root->right);
+    cout << root->val_ << endl; 
+}`,
+    java: `public void postorder(TreeNode root) {
+    if (root == null) {
+        return;
+    }
+    postorder(root.left);
+    postorder(root.right);
+    System.out.println(root.val);
+}`
+  },
   "Binary Search": {
     python: `def binarySearch(arr, target): 
     LEFT, RIGHT = 0, len(arr) - 1
@@ -591,6 +666,7 @@ const patternBoilerplates = {
     
     return maxProfit;
 }`,
+
 }
 }
 export default patternBoilerplates;

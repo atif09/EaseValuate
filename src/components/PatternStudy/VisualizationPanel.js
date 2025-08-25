@@ -12,6 +12,9 @@ import topKSteps from './animations/topKSteps';
 import kWayMergeSteps from './animations/kWayMergeSteps';
 import bitManipulationSteps from './animations/bitManipulationSteps';
 import greedySteps from './animations/greedySteps';
+import inorderSteps from './animations/inorderSteps';
+import preorderSteps from './animations/preorderSteps';
+import postorderSteps from './animations/postorderSteps';
 
 function VisualizationPanel({patternName, onStepChange, onReset, selectedLanguage, currentStepInfo}) {
   let steps = [];
@@ -27,6 +30,9 @@ function VisualizationPanel({patternName, onStepChange, onReset, selectedLanguag
   else if(patternName === "K-way Merge") steps = kWayMergeSteps;
   else if(patternName === "Bit Manipulation") steps = bitManipulationSteps;
   else if(patternName === "Greedy Algorithms") steps = greedySteps;
+  else if(patternName === "Inorder Traversal (DFS)") steps = inorderSteps;
+  else if(patternName === "Preorder Traversal (DFS)") steps = preorderSteps;
+  else if(patternName === "Postorder Traversal (DFS)") steps = postorderSteps;
 
   const [revealCount, setRevealCount] = useState(1);
   const [step, setStep] = useState(0);
