@@ -1954,10 +1954,6 @@ if (patternName === "Inorder Traversal (DFS)") {
     };
 
     const renderBacktrackArrow = (x1, y1, x2, y2) => {
-      const angle = Math.atan2(y2 - y1, x2 - x1);
-      const arrowLength = 10;
-      const arrowAngle = Math.PI / 6;
-      
       return (
         <g>
           <line
@@ -1968,10 +1964,10 @@ if (patternName === "Inorder Traversal (DFS)") {
             stroke='#dc3545'
             strokeWidth='3'
             strokeDasharray='8,4'
-            markerEnd='url(#backtrack-arrow)'/>
+            markerEnd='url(#backtrack-arrow-in)'/>
           <defs>
             <marker
-              id='backtrack-arrow'
+              id='backtrack-arrow-in'
               viewBox='0 0 10 10'
               refX='8'
               refY='3'
@@ -1985,10 +1981,33 @@ if (patternName === "Inorder Traversal (DFS)") {
       );
     };
 
-    
+    const getVisitedNodes = () => {
+      if (!current || !current.visitedNodes) return [];
+      if (typeof current.visitedNodes === 'string') {
+        if (current.visitedNodes === 'all_nodes') return ['1', '2', '3', '4', '6', '7'];
+        return [current.visitedNodes];
+      }
+      return current.visitedNodes;
+    };
+
+    const visitedNodes = getVisitedNodes();
     const getVisitOrder = (nodeValue) => {
-      const order = {1: 1, 2: 2, 3: 3, 4: 4, 6: 5, 7: 6};
-      return current.visitedNodes && current.visitedNodes.includes(nodeValue.toString()) ? order[nodeValue] : null;
+      const orderMap = {'1': 1, '2': 2, '3': 3, '4': 4, '6': 5, '7': 6};
+      const index = visitedNodes.indexOf(nodeValue.toString());
+      return index !== -1 ? index + 1 : null;
+    };
+
+
+    const isNodeHighlighted = (nodeId) => {
+      return current.highlightNodes && current.highlightNodes.includes(nodeId);
+    };
+
+    const isNodeCurrent = (nodeId) => {
+      return current.currentNode === nodeId;
+    };
+
+    const isNodeVisited = (nodeValue) => {
+      return visitedNodes.includes(nodeValue.toString());
     };
 
     return (
@@ -2039,52 +2058,52 @@ if (patternName === "Inorder Traversal (DFS)") {
             marginBottom: '2rem'
           }}>
             <svg width="500" height="350" style={{ background: 'rgba(35,36,58,0.2)', borderRadius: 8 }}>
-             
+   
               {renderTreeEdge(250, 70, 180, 140)}
               {renderTreeEdge(250, 70, 320, 140)}
               {renderTreeEdge(180, 140, 130, 210)}
               {renderTreeEdge(180, 140, 230, 210)}
               {renderTreeEdge(320, 140, 370, 210)}
 
-             
+      
               {current.action === 'backtrack' && current.currentNode === 'parent' && 
                 renderBacktrackArrow(130, 210, 180, 140)}
               {current.action === 'backtrack' && current.currentNode === 'root' && 
                 renderBacktrackArrow(180, 140, 250, 70)}
 
-         
+           
               {renderTreeNode(4, 250, 70, 
-                current.highlightNodes && current.highlightNodes.includes('root'),
-                current.visitedNodes && current.visitedNodes.includes('4'),
-                current.currentNode === 'root',
+                isNodeHighlighted('root'),
+                isNodeVisited(4),
+                isNodeCurrent('root'),
                 getVisitOrder(4))}
               {renderTreeNode(2, 180, 140, 
-                current.highlightNodes && current.highlightNodes.includes('left') || current.highlightNodes && current.highlightNodes.includes('parent'),
-                current.visitedNodes && current.visitedNodes.includes('2'),
-                current.currentNode === 'left' || current.currentNode === 'parent',
+                isNodeHighlighted('left') || isNodeHighlighted('parent'),
+                isNodeVisited(2),
+                isNodeCurrent('left') || isNodeCurrent('parent'),
                 getVisitOrder(2))}
               {renderTreeNode(6, 320, 140, 
-                current.highlightNodes && current.highlightNodes.includes('right'),
-                current.visitedNodes && current.visitedNodes.includes('6'),
-                current.currentNode === 'right',
+                isNodeHighlighted('right'),
+                isNodeVisited(6),
+                isNodeCurrent('right'),
                 getVisitOrder(6))}
               {renderTreeNode(1, 130, 210, 
-                current.highlightNodes && current.highlightNodes.includes('leftmost'),
-                current.visitedNodes && current.visitedNodes.includes('1'),
-                current.currentNode === 'leftmost',
+                isNodeHighlighted('leftmost'),
+                isNodeVisited(1),
+                isNodeCurrent('leftmost'),
                 getVisitOrder(1))}
               {renderTreeNode(3, 230, 210, 
-                current.highlightNodes && current.highlightNodes.includes('left_right') || current.highlightNodes && current.highlightNodes.includes('parent_right'),
-                current.visitedNodes && current.visitedNodes.includes('3'),
-                current.currentNode === 'left_right' || current.currentNode === 'parent_right',
+                isNodeHighlighted('leftmost_right') || isNodeHighlighted('parent_right'),
+                isNodeVisited(3),
+                isNodeCurrent('leftmost_right') || isNodeCurrent('parent_right'),
                 getVisitOrder(3))}
               {renderTreeNode(7, 370, 210, 
-                current.highlightNodes && current.highlightNodes.includes('right_right'),
-                current.visitedNodes && current.visitedNodes.includes('7'),
-                current.currentNode === 'right_right',
+                isNodeHighlighted('right_right'),
+                isNodeVisited(7),
+                isNodeCurrent('right_right'),
                 getVisitOrder(7))}
 
-       
+
               <g>
                 <text x="20" y="25" fill="#ccc" fontSize="12" fontWeight="600">Legend:</text>
                 <circle cx="30" cy="40" r="8" fill="rgba(161,32,255,0.2)" stroke="#a120ff" strokeWidth="2" />
@@ -2130,14 +2149,14 @@ if (patternName === "Inorder Traversal (DFS)") {
                   color: '#fff',
                   fontFamily: 'monospace'
                 }}>
-                  [{(current.visitedNodes || []).join(', ')}]
+                  [{visitedNodes.join(', ')}]
                 </div>
                 <div style={{
                   fontSize: '12px',
                   color: '#ccc',
                   marginTop: '0.5rem'
                 }}>
-                  Final: [1, 2, 3, 4, 6, 7]
+                  Final Result: [1, 2, 3, 4, 6, 7]
                 </div>
               </div>
 
@@ -2161,15 +2180,15 @@ if (patternName === "Inorder Traversal (DFS)") {
                   fontWeight: 600,
                   color: '#fff'
                 }}>
-                  {current.action === 'start' ? 'Starting traversal' :
-                   current.action === 'traverse_left' ? 'Going left' :
-                   current.action === 'found_leftmost' ? 'Found leftmost' :
+                  {current.action === 'start' ? 'Starting at root' :
+                   current.action === 'traverse_left' ? 'Going left first' :
+                   current.action === 'found_leftmost' ? 'Found leftmost node' :
                    current.action === 'visit' ? 'Visiting node' :
-                   current.action === 'check_right' ? 'Checking right' :
+                   current.action === 'check_right' ? 'Checking right child' :
                    current.action === 'traverse_right' ? 'Going right' :
-                   current.action === 'backtrack' ? '🔴 Backtracking' :
+                   current.action === 'backtrack' ? 'Backtracking to parent' :
                    current.action === 'continue' ? 'Continuing pattern' :
-                   current.action === 'complete' ? 'Complete!' :
+                   current.action === 'complete' ? 'Traversal complete!' :
                    'Processing...'}
                 </div>
               </div>
@@ -2196,7 +2215,31 @@ if (patternName === "Inorder Traversal (DFS)") {
               color: '#ccc',
               lineHeight: 1.5
             }}>
-              {current.explanation || 'Inorder traversal visits nodes in Left → Root → Right pattern, producing sorted order for Binary Search Trees.'}
+              {current.explanation || 'Inorder traversal visits nodes in Left → Root → Right pattern. For Binary Search Trees, this produces values in sorted order.'}
+            </div>
+          </div>
+
+          <div style={{
+            background: 'rgba(46,125,50,0.1)',
+            border: '1px solid #2e7d32',
+            borderRadius: 12,
+            padding: '1rem',
+            marginBottom: '2rem',
+            textAlign: 'center'
+          }}>
+            <div style={{
+              fontSize: '16px',
+              fontWeight: 600,
+              marginBottom: '0.5rem',
+              color: '#2e7d32'
+            }}>
+              Key Rule: Left Before Root
+            </div>
+            <div style={{
+              fontSize: '14px',
+              color: '#ccc'
+            }}>
+              Always visit the entire left subtree before processing the root, then visit the right subtree. For BSTs, this gives sorted output!
             </div>
           </div>
 
@@ -2256,7 +2299,6 @@ if (patternName === "Inorder Traversal (DFS)") {
       </div>
     );
 }
-
 
   if (patternName === "In-place Reversal of a Linked List") {
   const maxSteps = steps.length;
