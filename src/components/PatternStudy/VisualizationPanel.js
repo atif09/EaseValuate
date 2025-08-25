@@ -1257,7 +1257,7 @@ if(!steps.length || steps.length === 0 || !current) {
     );  
 }
 
-  if (patternName === "Inorder Traversal (DFS)") {
+  if (patternName === "Inorder Traversal") {
     const maxSteps = steps.length;
     const info = currentStepInfo || current || {};
 
@@ -1368,14 +1368,14 @@ if(!steps.length || steps.length === 0 || !current) {
             marginBottom: '2rem'
           }}>
             <svg width="500" height="300" style={{ background: 'rgba(35,36,58,0.2)', borderRadius: 8 }}>
-  
+              {/* Tree Edges */}
               {renderTreeEdge(250, 50, 180, 120)}
               {renderTreeEdge(250, 50, 320, 120)}
               {renderTreeEdge(180, 120, 130, 190)}
               {renderTreeEdge(180, 120, 230, 190)}
               {renderTreeEdge(320, 120, 370, 190)}
 
-      
+              {/* Tree Nodes - Sample Binary Tree */}
               {renderTreeNode(4, 250, 50, 
                 current.highlightNodes && current.highlightNodes.includes('root'),
                 current.visitedNodes && current.visitedNodes.includes('root'),
@@ -1401,7 +1401,7 @@ if(!steps.length || steps.length === 0 || !current) {
                 current.visitedNodes && current.visitedNodes.includes('right_right'),
                 current.currentNode === 'right_right')}
 
-       
+              {/* Legend */}
               <g>
                 <text x="20" y="25" fill="#ccc" fontSize="12" fontWeight="600">Legend:</text>
                 <circle cx="30" cy="40" r="8" fill="rgba(161,32,255,0.2)" stroke="#a120ff" strokeWidth="2" />
@@ -1568,7 +1568,7 @@ if(!steps.length || steps.length === 0 || !current) {
     );
 }
 
-  if (patternName === "Preorder Traversal (DFS)") {
+  if (patternName === "Preorder Traversal") {
     const maxSteps = steps.length;
     const info = currentStepInfo || current || {};
 
@@ -1679,14 +1679,14 @@ if(!steps.length || steps.length === 0 || !current) {
             marginBottom: '2rem'
           }}>
             <svg width="500" height="300" style={{ background: 'rgba(35,36,58,0.2)', borderRadius: 8 }}>
-       
+              {/* Tree Edges */}
               {renderTreeEdge(250, 50, 180, 120)}
               {renderTreeEdge(250, 50, 320, 120)}
               {renderTreeEdge(180, 120, 130, 190)}
               {renderTreeEdge(180, 120, 230, 190)}
               {renderTreeEdge(320, 120, 370, 190)}
 
-       
+              {/* Tree Nodes - Sample Binary Tree */}
               {renderTreeNode(4, 250, 50, 
                 current.highlightNodes && current.highlightNodes.includes('root'),
                 current.visitedNodes && current.visitedNodes.includes('root'),
@@ -1712,7 +1712,7 @@ if(!steps.length || steps.length === 0 || !current) {
                 current.visitedNodes && current.visitedNodes.includes('right_leaf'),
                 current.currentNode === 'right_leaf')}
 
-
+              {/* Legend */}
               <g>
                 <text x="20" y="25" fill="#ccc" fontSize="12" fontWeight="600">Legend:</text>
                 <circle cx="30" cy="40" r="8" fill="rgba(161,32,255,0.2)" stroke="#a120ff" strokeWidth="2" />
@@ -1879,11 +1879,11 @@ if(!steps.length || steps.length === 0 || !current) {
     );
 }
 
-  if (patternName === "Postorder Traversal (DFS)") {
+if (patternName === "Inorder Traversal (DFS)") {
     const maxSteps = steps.length;
     const info = currentStepInfo || current || {};
 
-    const renderTreeNode = (nodeValue, x, y, isHighlighted = false, isVisited = false, isCurrent = false) => {
+    const renderTreeNode = (nodeValue, x, y, isHighlighted = false, isVisited = false, isCurrent = false, visitOrder = null) => {
       const nodeRadius = 25;
       const nodeColor = isCurrent ? '#a120ff' : 
                         isVisited ? '#4caf50' :
@@ -1915,6 +1915,17 @@ if(!steps.length || steps.length === 0 || !current) {
             fontWeight={isCurrent ? '700' : '500'}>
             {nodeValue}
           </text>
+          {visitOrder && (
+            <text
+              x={x}
+              y={y+45}
+              textAnchor='middle'
+              fill='#4caf50'
+              fontSize='12'
+              fontWeight='700'>
+              #{visitOrder}
+            </text>
+          )}
           {isCurrent && (
             <text
               x={x}
@@ -1942,6 +1953,44 @@ if(!steps.length || steps.length === 0 || !current) {
       );
     };
 
+    const renderBacktrackArrow = (x1, y1, x2, y2) => {
+      const angle = Math.atan2(y2 - y1, x2 - x1);
+      const arrowLength = 10;
+      const arrowAngle = Math.PI / 6;
+      
+      return (
+        <g>
+          <line
+            x1={x1}
+            y1={y1}
+            x2={x2}
+            y2={y2}
+            stroke='#dc3545'
+            strokeWidth='3'
+            strokeDasharray='8,4'
+            markerEnd='url(#backtrack-arrow)'/>
+          <defs>
+            <marker
+              id='backtrack-arrow'
+              viewBox='0 0 10 10'
+              refX='8'
+              refY='3'
+              markerWidth='6'
+              markerHeight='6'
+              orient='auto'>
+              <path d='M0,0 L0,6 L9,3 z' fill='#dc3545'/>
+            </marker>
+          </defs>
+        </g>
+      );
+    };
+
+    
+    const getVisitOrder = (nodeValue) => {
+      const order = {1: 1, 2: 2, 3: 3, 4: 4, 6: 5, 7: 6};
+      return current.visitedNodes && current.visitedNodes.includes(nodeValue.toString()) ? order[nodeValue] : null;
+    };
+
     return (
       <div style={{color: '#fff'}}>
         {info && (
@@ -1959,7 +2008,7 @@ if(!steps.length || steps.length === 0 || !current) {
               marginBottom: '0.5rem',
               color: '#a120ff'
             }}>
-              Step {step+1}: {info.title || `Postorder Step ${step + 1}`}
+              Step {step+1}: {info.title || `Inorder Step ${step + 1}`}
             </div>
             <div style={{
               fontSize: '14px',
@@ -1973,7 +2022,7 @@ if(!steps.length || steps.length === 0 || !current) {
               color: '#ff9800',
               fontStyle: 'italic'
             }}>
-              Pattern: Left → Right → Root (Root visited LAST)
+              Pattern: Left → Root → Right (Sorted order for BST)
             </div>
           </div>
         )}
@@ -1989,41 +2038,53 @@ if(!steps.length || steps.length === 0 || !current) {
             justifyContent: 'center',
             marginBottom: '2rem'
           }}>
-            <svg width="500" height="300" style={{ background: 'rgba(35,36,58,0.2)', borderRadius: 8 }}>
-          
-              {renderTreeEdge(250, 50, 180, 120)}
-              {renderTreeEdge(250, 50, 320, 120)}
-              {renderTreeEdge(180, 120, 130, 190)}
-              {renderTreeEdge(180, 120, 230, 190)}
-              {renderTreeEdge(320, 120, 370, 190)}
+            <svg width="500" height="350" style={{ background: 'rgba(35,36,58,0.2)', borderRadius: 8 }}>
+             
+              {renderTreeEdge(250, 70, 180, 140)}
+              {renderTreeEdge(250, 70, 320, 140)}
+              {renderTreeEdge(180, 140, 130, 210)}
+              {renderTreeEdge(180, 140, 230, 210)}
+              {renderTreeEdge(320, 140, 370, 210)}
 
-            
-              {renderTreeNode(4, 250, 50, 
+             
+              {current.action === 'backtrack' && current.currentNode === 'parent' && 
+                renderBacktrackArrow(130, 210, 180, 140)}
+              {current.action === 'backtrack' && current.currentNode === 'root' && 
+                renderBacktrackArrow(180, 140, 250, 70)}
+
+         
+              {renderTreeNode(4, 250, 70, 
                 current.highlightNodes && current.highlightNodes.includes('root'),
-                current.visitedNodes && current.visitedNodes.includes('root'),
-                current.currentNode === 'root')}
-              {renderTreeNode(2, 180, 120, 
-                current.highlightNodes && current.highlightNodes.includes('parent'),
-                current.visitedNodes && current.visitedNodes.includes('parent'),
-                current.currentNode === 'parent')}
-              {renderTreeNode(6, 320, 120, 
-                current.highlightNodes && current.highlightNodes.includes('right_child'),
-                current.visitedNodes && current.visitedNodes.includes('right_child'),
-                current.currentNode === 'right_child')}
-              {renderTreeNode(1, 130, 190, 
+                current.visitedNodes && current.visitedNodes.includes('4'),
+                current.currentNode === 'root',
+                getVisitOrder(4))}
+              {renderTreeNode(2, 180, 140, 
+                current.highlightNodes && current.highlightNodes.includes('left') || current.highlightNodes && current.highlightNodes.includes('parent'),
+                current.visitedNodes && current.visitedNodes.includes('2'),
+                current.currentNode === 'left' || current.currentNode === 'parent',
+                getVisitOrder(2))}
+              {renderTreeNode(6, 320, 140, 
+                current.highlightNodes && current.highlightNodes.includes('right'),
+                current.visitedNodes && current.visitedNodes.includes('6'),
+                current.currentNode === 'right',
+                getVisitOrder(6))}
+              {renderTreeNode(1, 130, 210, 
                 current.highlightNodes && current.highlightNodes.includes('leftmost'),
-                current.visitedNodes && current.visitedNodes.includes('leftmost'),
-                current.currentNode === 'leftmost')}
-              {renderTreeNode(3, 230, 190, 
-                current.highlightNodes && current.highlightNodes.includes('right_subtree'),
-                current.visitedNodes && current.visitedNodes.includes('right_subtree'),
-                current.currentNode === 'right_subtree')}
-              {renderTreeNode(7, 370, 190, 
-                current.highlightNodes && current.highlightNodes.includes('right_leaf'),
-                current.visitedNodes && current.visitedNodes.includes('right_leaf'),
-                current.currentNode === 'right_leaf')}
+                current.visitedNodes && current.visitedNodes.includes('1'),
+                current.currentNode === 'leftmost',
+                getVisitOrder(1))}
+              {renderTreeNode(3, 230, 210, 
+                current.highlightNodes && current.highlightNodes.includes('left_right') || current.highlightNodes && current.highlightNodes.includes('parent_right'),
+                current.visitedNodes && current.visitedNodes.includes('3'),
+                current.currentNode === 'left_right' || current.currentNode === 'parent_right',
+                getVisitOrder(3))}
+              {renderTreeNode(7, 370, 210, 
+                current.highlightNodes && current.highlightNodes.includes('right_right'),
+                current.visitedNodes && current.visitedNodes.includes('7'),
+                current.currentNode === 'right_right',
+                getVisitOrder(7))}
 
-           
+       
               <g>
                 <text x="20" y="25" fill="#ccc" fontSize="12" fontWeight="600">Legend:</text>
                 <circle cx="30" cy="40" r="8" fill="rgba(161,32,255,0.2)" stroke="#a120ff" strokeWidth="2" />
@@ -2034,6 +2095,9 @@ if(!steps.length || steps.length === 0 || !current) {
                 
                 <circle cx="30" cy="80" r="8" fill="rgba(76,175,80,0.2)" stroke="#4caf50" strokeWidth="2" />
                 <text x="45" y="85" fill="#ccc" fontSize="10">Visited</text>
+
+                <line x1="30" y1="100" x2="50" y2="100" stroke="#dc3545" strokeWidth="3" strokeDasharray="4,2"/>
+                <text x="55" y="105" fill="#ccc" fontSize="10">Backtrack</text>
               </g>
             </svg>
           </div>
@@ -2066,14 +2130,14 @@ if(!steps.length || steps.length === 0 || !current) {
                   color: '#fff',
                   fontFamily: 'monospace'
                 }}>
-                  [1, 3, 2, 7, 6, 4]
+                  [{(current.visitedNodes || []).join(', ')}]
                 </div>
                 <div style={{
                   fontSize: '12px',
                   color: '#ccc',
                   marginTop: '0.5rem'
                 }}>
-                  Postorder Result (Children First)
+                  Final: [1, 2, 3, 4, 6, 7]
                 </div>
               </div>
 
@@ -2098,12 +2162,13 @@ if(!steps.length || steps.length === 0 || !current) {
                   color: '#fff'
                 }}>
                   {current.action === 'start' ? 'Starting traversal' :
-                   current.action === 'traverse_left' ? 'Going left first' :
+                   current.action === 'traverse_left' ? 'Going left' :
+                   current.action === 'found_leftmost' ? 'Found leftmost' :
+                   current.action === 'visit' ? 'Visiting node' :
+                   current.action === 'check_right' ? 'Checking right' :
                    current.action === 'traverse_right' ? 'Going right' :
-                   current.action === 'found_leaf' ? 'Found leaf node' :
-                   current.action === 'visit' ? 'Visiting after children' :
-                   current.action === 'backtrack' ? 'Backtracking to parent' :
-                   current.action === 'process_subtree' ? 'Processing subtree' :
+                   current.action === 'backtrack' ? '🔴 Backtracking' :
+                   current.action === 'continue' ? 'Continuing pattern' :
                    current.action === 'complete' ? 'Complete!' :
                    'Processing...'}
                 </div>
@@ -2131,31 +2196,7 @@ if(!steps.length || steps.length === 0 || !current) {
               color: '#ccc',
               lineHeight: 1.5
             }}>
-              {current.explanation || 'Postorder traversal visits nodes in Left → Right → Root pattern. Each node is visited only AFTER all its children are processed, making it perfect for tree deletion operations.'}
-            </div>
-          </div>
-
-          <div style={{
-            background: 'rgba(220,53,69,0.1)',
-            border: '1px solid #dc3545',
-            borderRadius: 12,
-            padding: '1rem',
-            marginBottom: '2rem',
-            textAlign: 'center'
-          }}>
-            <div style={{
-              fontSize: '16px',
-              fontWeight: 600,
-              marginBottom: '0.5rem',
-              color: '#dc3545'
-            }}>
-              Key Insight: Root Visited LAST
-            </div>
-            <div style={{
-              fontSize: '14px',
-              color: '#ccc'
-            }}>
-              Unlike other traversals, postorder ensures that when you visit a node, ALL its descendants have already been processed. This makes it ideal for operations like deleting nodes or calculating tree sizes.
+              {current.explanation || 'Inorder traversal visits nodes in Left → Root → Right pattern, producing sorted order for Binary Search Trees.'}
             </div>
           </div>
 
@@ -2215,7 +2256,6 @@ if(!steps.length || steps.length === 0 || !current) {
       </div>
     );
 }
-
 
 
   if (patternName === "In-place Reversal of a Linked List") {
