@@ -664,9 +664,41 @@ const patternBoilerplates = {
         maxProfit = Math.max(maxProfit, price - minPrice);
     }
     
-    return maxProfit;
+    return maxProfit; 
 }`,
+  },
+  "1-Dimension DP": {
+    python: `def dp_1d(arr):
+    n = len(arr)
+    if n == 0:
+        return 0
+    dp = [0] * n
+    dp[0] = arr[0]  # Base case
+    for i in range(1, n):
+        dp[i] = max(dp[i-1], arr[i])
+    return dp[n-1]
+`,
+    cpp: `int dp1D(vector<int>& arr) {
+    int n = arr.size();
+    if(n == 0) return 0;
+    vector<int> dp(n);
+    dp[0] = arr[0];  // Base case
+    for(int i = 1; i < n; i++) {
+        dp[i] = max(dp[i-1], arr[i]);
+    }
+    return dp[n-1];
+}`,
+    java: `public int dp1D(int[] arr) {
+    int n = arr.length;
+    if(n == 0) return 0;
+    int[] dp = new int[n];
+    dp[0] = arr[0];  // Base case
+    for(int i = 1; i < n; i++) {
+        dp[i] = Math.max(dp[i-1], arr[i]);
+    }
+    return dp[n-1];
+}`
+  },
 
-}
 }
 export default patternBoilerplates;

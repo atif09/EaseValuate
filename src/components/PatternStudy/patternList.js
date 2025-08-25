@@ -13,7 +13,8 @@ const patterns = [
   "K-way Merge",
   "Subsets (Backtracking)",
   "Bit Manipulation",
-  "Dynamic Programming (Tabulation)",
+  "1-Dimension DP",
+  "2-Dimension DP",
   "Greedy Algorithms",
   "Binary Search"
 ];
