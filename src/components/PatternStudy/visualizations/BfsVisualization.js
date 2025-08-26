@@ -1,5 +1,5 @@
 import React, { useState, useRef } from 'react';
-import { bfsSteps } from '../animations/bfsSteps';
+import bfsSteps from '../animations/bfsSteps';
 
 function BfsVisualization({ onStepChange, onReset, currentStepInfo }) {
     const [step, setStep] = useState(0);

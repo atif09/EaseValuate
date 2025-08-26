@@ -1,5 +1,5 @@
 import React, { useState, useRef } from 'react';
-import { inPlaceReversalSteps } from '../animations/inPlaceReversalSteps';
+import inPlaceReversalSteps from '../animations/inPlaceReversalSteps';
 
 function LlReversalVisualization({ onStepChange, onReset, currentStepInfo }) {
   const [step, setStep] = useState(0);

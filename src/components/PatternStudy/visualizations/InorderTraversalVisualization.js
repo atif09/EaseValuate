@@ -1,5 +1,5 @@
 import React, { useState, useRef } from 'react';
-import { inorderSteps } from '../animations/inorderSteps';
+import inorderSteps from '../animations/inorderSteps';
 
 function InorderTraversalVisualization({ onStepChange, onReset, currentStepInfo }) {
   const [step, setStep] = useState(0);
@@ -315,3 +315,5 @@ function InorderTraversalVisualization({ onStepChange, onReset, currentStepInfo 
       </div>
     );
 }
+
+export default InorderTraversalVisualization;

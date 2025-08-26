@@ -1,5 +1,5 @@
 import React, { useState, useRef } from 'react';
-import { twoPointersSteps } from '../animations/twoPointersSteps';
+import twoPointersSteps from '../animations/twoPointersSteps';
 
 function TwoPointersVisualization({ onStepChange, onReset, currentStepInfo }) {
   const [step, setStep] = useState(0);

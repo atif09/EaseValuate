@@ -1,5 +1,5 @@
 import React, { useState, useRef } from 'react';
-import { preorderSteps } from '../animations/preorderSteps';
+import preorderSteps from '../animations/preorderSteps';
 
 function PreorderTraversalVisualization({ onStepChange, onReset, currentStepInfo }) {
   const [step, setStep] = useState(0);

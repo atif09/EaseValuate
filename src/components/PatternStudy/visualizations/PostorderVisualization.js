@@ -1,5 +1,5 @@
 import React, { useState, useRef } from 'react';
-import { postorderSteps } from '../animations/postorderSteps';
+import postorderSteps from '../animations/postorderSteps';
 
 function PostorderVisualization({ onStepChange, onReset, currentStepInfo }) {
   const [step, setStep] = useState(0);

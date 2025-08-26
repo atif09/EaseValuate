@@ -1,5 +1,5 @@
 import React, { useState, useRef } from 'react';
-import { binarySearchSteps } from '../animations/binarySearchSteps';
+import binarySearchSteps from '../animations/binarySearchSteps';
 
 function BinarySearchVisualization({ onStepChange, onReset, currentStepInfo }) {
   const [step, setStep] = useState(0);

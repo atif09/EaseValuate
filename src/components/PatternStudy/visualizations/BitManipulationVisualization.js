@@ -1,5 +1,5 @@
 import React, { useState, useRef } from 'react';
-import { bitManipulationSteps } from '../animations/bitManipulationSteps';
+import bitManipulationSteps from '../animations/bitManipulationSteps';
 
 function BitManipulationVisualization({ onStepChange, onReset, currentStepInfo }) {
   const [step, setStep] = useState(0);

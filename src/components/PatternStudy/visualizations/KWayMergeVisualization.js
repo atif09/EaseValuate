@@ -1,5 +1,5 @@
 import React, { useState, useRef } from 'react';
-import { kWayMergeSteps } from '../animations/kWayMergeSteps';
+import kWayMergeSteps from '../animations/kWayMergeSteps';
 
 function KWayMergeVisualization({ onStepChange, onReset, currentStepInfo }) {
   const [step, setStep] = useState(0);
