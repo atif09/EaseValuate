@@ -2,8 +2,6 @@ import React from 'react';
 import patterns from './patternList';
 import { useNavigate } from 'react-router-dom';
 import {
-  hoverBg,
-  purple,
   dropdownStyle,
   patternListStyle,
   patternItemStyle

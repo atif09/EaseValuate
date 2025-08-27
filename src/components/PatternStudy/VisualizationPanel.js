@@ -1,6 +1,4 @@
 import React from 'react';
-
-
 import BacktrackingVisualization from './visualizations/BacktrackingVisualization';
 import BfsVisualization from './visualizations/BfsVisualization';
 import BinarySearchVisualization from './visualizations/BinarySearchVisualization';
