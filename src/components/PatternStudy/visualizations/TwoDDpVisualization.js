@@ -1,207 +1,353 @@
-import React, { useState, useRef } from 'react';
+import React, { useState, useRef, useMemo, useCallback } from 'react';
 import dp2DSteps from '../animations/dp2DSteps';
 
-function TwoDDpVisualization({ onStepChange, onReset, currentStepInfo }) {
-  const [step, setStep] = useState(0);
-  const steps = dp2DSteps;
-  const maxSteps = steps.length;
-  const current = (steps && steps.length > 0 && step < steps.length) ? steps[step] : null;
-  const info = currentStepInfo || current || {};
-  const containerRef = useRef(null);
+const THEME = {
+  colors: {
+    primary: '#a120ff',
+    secondary: '#6c757d',
+    success: '#4caf50',
+    danger: '#dc3545',
+    warning: '#ff9800',
+    info: '#2196f3',
+    purple: '#9c27b0',
+    light: '#fff',
+    muted: '#ccc',
+    dark: '#666',
+    highlight: '#bfb3ff'
+  },
+  backgrounds: {
+    primary: 'rgba(161,32,255,0.1)',
+    card: 'rgba(35,36,58,0.6)',
+    container: 'rgba(10,13,22,0.3)',
+    success: 'rgba(76,175,80,0.2)',
+    info: 'rgba(33,150,243,0.2)',
+    warning: 'rgba(255,152,0,0.2)',
+    purple: 'rgba(156,39,176,0.3)',
+    disabled: 'rgba(255,255,255,0.1)',
+    empty: 'rgba(255,255,255,0.05)',
+    border: 'rgba(255,255,255,0.3)'
+  },
+  effects: {
+    border: 'rgba(161,32,255,0.2)',
+    shadow: 'rgba(161,32,255,0.3)',
+    successShadow: 'rgba(76,175,80,0.3)',
+    warningShadow: 'rgba(255,152,0,0.3)',
+    purpleShadow: 'rgba(156,39,176,0.4)',
+    primaryShadow: 'rgba(161,32,255,0.2)'
+  }
+};
+
+const DPLogic = {
+  getPhaseColor: (phase) => {
+    const phaseColorMap = {
+      initialize: THEME.colors.info,
+      setup: THEME.colors.info,
+      base_case_rows: THEME.colors.warning,
+      base_case_cols: THEME.colors.warning,
+      calculating: THEME.colors.success,
+      updating: THEME.colors.success,
+      complete: THEME.colors.purple
+    };
+    return phaseColorMap[phase] || THEME.colors.primary;
+  },
+
+  getPhaseTitle: (phase, stepNumber) => {
+    const phaseTitleMap = {
+      initialize: 'Initialize Problem',
+      setup: 'Setup DP Grid',
+      base_case_rows: 'Fill Base Case (First Column)',
+      base_case_cols: 'Fill Base Case (First Row)',
+      calculating: 'Calculate Cell Value',
+      updating: 'Update DP Grid',
+      complete: 'Solution Complete!'
+    };
+    return phaseTitleMap[phase] || `Step ${stepNumber}`;
+  },
+
+  getCellStyles: (cell, isCurrentCell, isBaseCase, isDestination) => {
+    const getBorderColor = () => {
+      if (isDestination) return THEME.colors.purple;
+      if (isCurrentCell) return THEME.colors.success;
+      if (isBaseCase) return THEME.colors.warning;
+      if (cell > 0) return THEME.colors.primary;
+      return THEME.backgrounds.border;
+    };
+
+    const getBackground = () => {
+      if (isDestination) return THEME.backgrounds.purple;
+      if (isCurrentCell) return THEME.backgrounds.success;
+      if (isBaseCase) return THEME.backgrounds.warning;
+      if (cell > 0) return THEME.backgrounds.primary;
+      return THEME.backgrounds.empty;
+    };
+
+    const getBoxShadow = () => {
+      if (isDestination) return `0 4px 16px ${THEME.effects.purpleShadow}`;
+      if (isCurrentCell) return `0 4px 12px ${THEME.effects.successShadow}`;
+      if (isBaseCase) return `0 4px 12px ${THEME.effects.warningShadow}`;
+      if (cell > 0) return `0 2px 8px ${THEME.effects.primaryShadow}`;
+      return 'none';
+    };
+
+    return {
+      border: `3px solid ${getBorderColor()}`,
+      background: getBackground(),
+      boxShadow: getBoxShadow(),
+      fontWeight: cell > 0 ? 700 : 400
+    };
+  }
+};
+
+const GridCell = React.memo(({ 
+  cell, 
+  rowIdx, 
+  colIdx, 
+  isCurrentCell, 
+  isBaseCase, 
+  isDestination 
+}) => {
+  const cellStyles = DPLogic.getCellStyles(cell, isCurrentCell, isBaseCase, isDestination);
 
   return (
-    <div style={{ color: '#fff' }}>
-      {info && (
-        <div style={{
-          background: 'rgba(161,32,255,0.1)',
-          border: '1px solid #a120ff',
-          borderRadius: 12,
-          padding: '1rem',
-          marginBottom: '1.5rem',
-          textAlign: 'center'
-        }}>
-          <div style={{
-            fontSize: '18px',
-            fontWeight: 700,
-            marginBottom: '0.5rem',
-            color: info.phase === 'initialize' ? '#2196f3' :
-                   info.phase === 'setup' ? '#2196f3' :
-                   info.phase === 'base_case_rows' ? '#ff9800' :
-                   info.phase === 'base_case_cols' ? '#ff9800' :
-                   info.phase === 'calculating' ? '#4caf50' :
-                   info.phase === 'updating' ? '#4caf50' :
-                   info.phase === 'complete' ? '#9c27b0' :
-                   '#a120ff'
-          }}>
-            Step {step + 1}: {
-              info.phase === 'initialize' ? 'Initialize Problem' :
-              info.phase === 'setup' ? 'Setup DP Grid' :
-              info.phase === 'base_case_rows' ? 'Fill Base Case (First Column)' :
-              info.phase === 'base_case_cols' ? 'Fill Base Case (First Row)' :
-              info.phase === 'calculating' ? 'Calculate Cell Value' :
-              info.phase === 'updating' ? 'Update DP Grid' :
-              info.phase === 'complete' ? 'Solution Complete!' :
-              `Step ${step + 1}`
-            }
-          </div>
-          <div style={{
-            fontSize: '14px',
-            color: '#ccc',
-            marginBottom: '1rem'
-          }}>
-            {info.note || ''}
-          </div>
-          
-          <div style={{
-            display: 'flex',
-            gap: '1rem',
-            justifyContent: 'center',
-            flexWrap: 'wrap'
-          }}>
-            <div style={{
-              background: 'rgba(35,36,58,0.6)',
-              borderRadius: 8,
-              padding: '0.5rem 1rem',
-              display: 'inline-block'
-            }}>
-              <span style={{ color: '#ccc', fontSize: '14px' }}>Grid Size: </span>
-              <span style={{ color: '#a120ff', fontSize: '16px', fontWeight: 700 }}>
-                {info.m}×{info.n}
-              </span>
-            </div>
-            {info.currentRow >= 0 && info.currentCol >= 0 && (
-              <div style={{
-                background: 'rgba(35,36,58,0.6)',
-                borderRadius: 8,
-                padding: '0.5rem 1rem',
-                display: 'inline-block'
-              }}>
-                <span style={{ color: '#ccc', fontSize: '14px' }}>Current Cell: </span>
-                <span style={{ color: '#4caf50', fontSize: '16px', fontWeight: 700 }}>
-                  ({info.currentRow}, {info.currentCol})
-                </span>
-              </div>
-            )}
-            {info.totalPaths > 0 && (
-              <div style={{
-                background: 'rgba(35,36,58,0.6)',
-                borderRadius: 8,
-                padding: '0.5rem 1rem',
-                display: 'inline-block'
-              }}>
-                <span style={{ color: '#ccc', fontSize: '14px' }}>Total Paths: </span>
-                <span style={{ color: '#9c27b0', fontSize: '16px', fontWeight: 700 }}>
-                  {info.totalPaths}
-                </span>
-              </div>
-            )}
-          </div>
+    <div style={{
+      position: 'relative',
+      display: 'flex',
+      flexDirection: 'column',
+      alignItems: 'center'
+    }}>
+      <div style={{
+        width: '70px',
+        height: '70px',
+        borderRadius: 8,
+        ...cellStyles,
+        color: THEME.colors.light,
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'center',
+        fontSize: '18px',
+        transition: 'all 0.3s ease'
+      }}>
+        {cell}
+      </div>
+      <div style={{
+        fontSize: '10px',
+        color: isCurrentCell ? THEME.colors.success : THEME.colors.dark,
+        marginTop: '4px',
+        fontWeight: 600
+      }}>
+        ({rowIdx},{colIdx})
+      </div>
+    </div>
+  );
+});
+
+const InfoCard = React.memo(({ label, value, color = THEME.colors.primary }) => (
+  <div style={{
+    background: THEME.backgrounds.card,
+    borderRadius: 8,
+    padding: '0.5rem 1rem',
+    display: 'inline-block'
+  }}>
+    <span style={{ color: THEME.colors.muted, fontSize: '14px' }}>{label}: </span>
+    <span style={{ color, fontSize: '16px', fontWeight: 700 }}>{value}</span>
+  </div>
+));
+
+const CalculationBox = React.memo(({ label, value, color, backgroundColor }) => (
+  <div style={{
+    background: backgroundColor,
+    padding: '0.5rem 1rem',
+    borderRadius: 8,
+    border: `2px solid ${color}`
+  }}>
+    {label}: <span style={{ color }}>{value}</span>
+  </div>
+));
+
+const LegendItem = React.memo(({ color, backgroundColor, label }) => (
+  <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+    <div style={{
+      width: '20px',
+      height: '20px',
+      borderRadius: 4,
+      border: `2px solid ${color}`,
+      background: backgroundColor
+    }} />
+    <span style={{ fontSize: '14px', color: THEME.colors.muted }}>{label}</span>
+  </div>
+));
+
+const TwoDDpVisualization = ({ onStepChange, onReset, currentStepInfo }) => {
+  const [step, setStep] = useState(0);
+  const containerRef = useRef(null);
+  
+  const steps = useMemo(() => dp2DSteps || [], []);
+  const maxSteps = steps.length;
+  
+  const current = useMemo(() => 
+    (steps.length > 0 && step >= 0 && step < steps.length) ? steps[step] : null,
+    [steps, step]
+  );
+  
+  const info = useMemo(() => 
+    currentStepInfo || current || {},
+    [currentStepInfo, current]
+  );
+
+  const hasCalculationData = useMemo(() =>
+    current && (current.fromTop !== undefined || current.fromLeft !== undefined),
+    [current]
+  );
+
+  const handlePrevious = useCallback(() => {
+    if (step === 0) return;
+    
+    const prevStep = Math.max(0, step - 1);
+    setStep(prevStep);
+    onStepChange?.(prevStep + 1);
+  }, [step, onStepChange]);
+
+  const handleNext = useCallback(() => {
+    if (step < maxSteps - 1) {
+      const nextStep = step + 1;
+      setStep(nextStep);
+      onStepChange?.(nextStep + 1);
+    } else {
+      setStep(0);
+      onReset?.();
+      onStepChange?.(1);
+    }
+  }, [step, maxSteps, onStepChange, onReset]);
+
+  const isLastStep = step >= maxSteps - 1;
+  const isPreviousDisabled = step === 0;
+
+  if (!current?.dp || !Array.isArray(current.dp)) {
+    return (
+      <div style={{ 
+        color: THEME.colors.light,
+        display: 'flex',
+        justifyContent: 'center',
+        marginBottom: '2rem'
+      }}>
+        <div style={{ color: THEME.colors.highlight }}>
+          Loading grid...
         </div>
-      )}
+      </div>
+    );
+  }
+
+  return (
+    <div style={{ color: THEME.colors.light }}>
+      <div style={{
+        background: THEME.backgrounds.primary,
+        border: `1px solid ${THEME.colors.primary}`,
+        borderRadius: 12,
+        padding: '1rem',
+        marginBottom: '1.5rem',
+        textAlign: 'center'
+      }}>
+        <div style={{
+          fontSize: '18px',
+          fontWeight: 700,
+          marginBottom: '0.5rem',
+          color: DPLogic.getPhaseColor(info.phase)
+        }}>
+          Step {step + 1}: {DPLogic.getPhaseTitle(info.phase, step + 1)}
+        </div>
+        <div style={{
+          fontSize: '14px',
+          color: THEME.colors.muted,
+          marginBottom: '1rem'
+        }}>
+          {info.note || ''}
+        </div>
+        
+        <div style={{
+          display: 'flex',
+          gap: '1rem',
+          justifyContent: 'center',
+          flexWrap: 'wrap'
+        }}>
+          {info.m && info.n && (
+            <InfoCard 
+              label="Grid Size" 
+              value={`${info.m}×${info.n}`}
+              color={THEME.colors.primary}
+            />
+          )}
+          {info.currentRow >= 0 && info.currentCol >= 0 && (
+            <InfoCard 
+              label="Current Cell" 
+              value={`(${info.currentRow}, ${info.currentCol})`}
+              color={THEME.colors.success}
+            />
+          )}
+          {info.totalPaths > 0 && (
+            <InfoCard 
+              label="Total Paths" 
+              value={info.totalPaths}
+              color={THEME.colors.purple}
+            />
+          )}
+        </div>
+      </div>
 
       <div ref={containerRef} style={{
-        background: 'rgba(10,13,22,0.3)',
+        background: THEME.backgrounds.container,
         borderRadius: 12,
         padding: '1.5rem',
-        border: '1px solid rgba(161,32,255,0.2)'
+        border: `1px solid ${THEME.effects.border}`
       }}>
-
-
         <div style={{
           display: 'flex',
           justifyContent: 'center',
           marginBottom: '2rem'
         }}>
-          {current && current.dp && Array.isArray(current.dp) ? (
+          <div style={{
+            display: 'flex',
+            flexDirection: 'column',
+            gap: '0.5rem',
+            alignItems: 'center'
+          }}>
             <div style={{
-              display: 'flex',
-              flexDirection: 'column',
-              gap: '0.5rem',
-              alignItems: 'center'
+              fontSize: '16px',
+              fontWeight: 600,
+              color: THEME.colors.primary,
+              marginBottom: '0.5rem'
             }}>
-              <div style={{
-                fontSize: '16px',
-                fontWeight: 600,
-                color: '#a120ff',
-                marginBottom: '0.5rem'
-              }}>
-                Dynamic Programming Grid
-              </div>
-              {current.dp.map((row, rowIdx) => (
-                <div key={rowIdx} style={{
-                  display: 'flex',
-                  gap: '0.5rem'
-                }}>
-                  {row.map((cell, colIdx) => {
-                    const isCurrentCell = current.currentRow === rowIdx && current.currentCol === colIdx;
-                    const isBaseCase = (rowIdx === 0 || colIdx === 0) && cell > 0;
-                    const isDestination = rowIdx === current.m - 1 && colIdx === current.n - 1 && current.phase === 'complete';
-                    
-                    return (
-                      <div key={colIdx} style={{
-                        position: 'relative',
-                        display: 'flex',
-                        flexDirection: 'column',
-                        alignItems: 'center'
-                      }}>
-                 
-                        <div style={{
-                          width: '70px',
-                          height: '70px',
-                          borderRadius: 8,
-                          border: `3px solid ${
-                            isDestination ? '#9c27b0' :
-                            isCurrentCell ? '#4caf50' :
-                            isBaseCase ? '#ff9800' :
-                            cell > 0 ? '#a120ff' :
-                            'rgba(255,255,255,0.3)'
-                          }`,
-                          background: 
-                            isDestination ? 'rgba(156,39,176,0.3)' :
-                            isCurrentCell ? 'rgba(76,175,80,0.2)' :
-                            isBaseCase ? 'rgba(255,152,0,0.2)' :
-                            cell > 0 ? 'rgba(161,32,255,0.2)' :
-                            'rgba(255,255,255,0.05)',
-                          color: '#fff',
-                          display: 'flex',
-                          alignItems: 'center',
-                          justifyContent: 'center',
-                          fontWeight: cell > 0 ? 700 : 400,
-                          fontSize: '18px',
-                          boxShadow: 
-                            isDestination ? '0 4px 16px rgba(156,39,176,0.4)' :
-                            isCurrentCell ? '0 4px 12px rgba(76,175,80,0.3)' :
-                            isBaseCase ? '0 4px 12px rgba(255,152,0,0.3)' :
-                            cell > 0 ? '0 2px 8px rgba(161,32,255,0.2)' : 'none',
-                          transition: 'all 0.3s ease'
-                        }}>
-                          {cell}
-                        </div>
-                        
-                     
-                        <div style={{
-                          fontSize: '10px',
-                          color: isCurrentCell ? '#4caf50' : '#666',
-                          marginTop: '4px',
-                          fontWeight: 600
-                        }}>
-                          ({rowIdx},{colIdx})
-                        </div>
-                      </div>
-                    );
-                  })}
-                </div>
-              ))}
+              Dynamic Programming Grid
             </div>
-          ) : (
-            <div style={{ color: '#bfb3ff' }}>Loading grid...</div>
-          )}
+            {current.dp.map((row, rowIdx) => (
+              <div key={rowIdx} style={{
+                display: 'flex',
+                gap: '0.5rem'
+              }}>
+                {row.map((cell, colIdx) => {
+                  const isCurrentCell = current.currentRow === rowIdx && current.currentCol === colIdx;
+                  const isBaseCase = (rowIdx === 0 || colIdx === 0) && cell > 0;
+                  const isDestination = rowIdx === current.m - 1 && colIdx === current.n - 1 && current.phase === 'complete';
+                  
+                  return (
+                    <GridCell
+                      key={colIdx}
+                      cell={cell}
+                      rowIdx={rowIdx}
+                      colIdx={colIdx}
+                      isCurrentCell={isCurrentCell}
+                      isBaseCase={isBaseCase}
+                      isDestination={isDestination}
+                    />
+                  );
+                })}
+              </div>
+            ))}
+          </div>
         </div>
 
-  
-        {current && (current.fromTop !== undefined || current.fromLeft !== undefined) && (
+        {hasCalculationData && (
           <div style={{
-            background: 'rgba(35,36,58,0.6)',
+            background: THEME.backgrounds.card,
             borderRadius: 12,
             padding: '1.5rem',
             marginBottom: '2rem',
@@ -211,7 +357,7 @@ function TwoDDpVisualization({ onStepChange, onReset, currentStepInfo }) {
               fontSize: '18px',
               fontWeight: 600,
               marginBottom: '1rem',
-              color: '#4caf50'
+              color: THEME.colors.success
             }}>
               Calculation for Cell ({current.currentRow}, {current.currentCol})
             </div>
@@ -224,45 +370,38 @@ function TwoDDpVisualization({ onStepChange, onReset, currentStepInfo }) {
               fontWeight: 600,
               marginBottom: '1rem'
             }}>
-              <div style={{
-                background: 'rgba(76,175,80,0.2)',
-                padding: '0.5rem 1rem',
-                borderRadius: 8,
-                border: '2px solid #4caf50'
-              }}>
-                From Top: <span style={{ color: '#4caf50' }}>{current.fromTop}</span>
-              </div>
-              <div style={{ color: '#fff', fontSize: '20px' }}>+</div>
-              <div style={{
-                background: 'rgba(33,150,243,0.2)',
-                padding: '0.5rem 1rem',
-                borderRadius: 8,
-                border: '2px solid #2196f3'
-              }}>
-                From Left: <span style={{ color: '#2196f3' }}>{current.fromLeft}</span>
-              </div>
-              <div style={{ color: '#fff', fontSize: '20px' }}>=</div>
-              <div style={{
-                background: 'rgba(161,32,255,0.2)',
-                padding: '0.5rem 1rem',
-                borderRadius: 8,
-                border: '2px solid #a120ff'
-              }}>
-                Result: <span style={{ color: '#a120ff' }}>{current.fromTop + current.fromLeft}</span>
-              </div>
+              <CalculationBox
+                label="From Top"
+                value={current.fromTop}
+                color={THEME.colors.success}
+                backgroundColor={THEME.backgrounds.success}
+              />
+              <div style={{ color: THEME.colors.light, fontSize: '20px' }}>+</div>
+              <CalculationBox
+                label="From Left"
+                value={current.fromLeft}
+                color={THEME.colors.info}
+                backgroundColor={THEME.backgrounds.info}
+              />
+              <div style={{ color: THEME.colors.light, fontSize: '20px' }}>=</div>
+              <CalculationBox
+                label="Result"
+                value={current.fromTop + current.fromLeft}
+                color={THEME.colors.primary}
+                backgroundColor={THEME.backgrounds.primary}
+              />
             </div>
             <div style={{
               fontSize: '14px',
-              color: '#ccc'
+              color: THEME.colors.muted
             }}>
               Each cell stores the number of unique paths to reach that position
             </div>
           </div>
         )}
 
-    
         <div style={{
-          background: 'rgba(35,36,58,0.6)',
+          background: THEME.backgrounds.card,
           borderRadius: 12,
           padding: '1rem',
           marginBottom: '2rem'
@@ -271,7 +410,7 @@ function TwoDDpVisualization({ onStepChange, onReset, currentStepInfo }) {
             fontSize: '16px',
             fontWeight: 600,
             marginBottom: '1rem',
-            color: '#a120ff',
+            color: THEME.colors.primary,
             textAlign: 'center'
           }}>
             Legend
@@ -282,106 +421,72 @@ function TwoDDpVisualization({ onStepChange, onReset, currentStepInfo }) {
             gap: '1.5rem',
             flexWrap: 'wrap'
           }}>
-            <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
-              <div style={{
-                width: '20px',
-                height: '20px',
-                borderRadius: 4,
-                border: '2px solid #ff9800',
-                background: 'rgba(255,152,0,0.2)'
-              }}></div>
-              <span style={{ fontSize: '14px', color: '#ccc' }}>Base Case</span>
-            </div>
-            <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
-              <div style={{
-                width: '20px',
-                height: '20px',
-                borderRadius: 4,
-                border: '2px solid #4caf50',
-                background: 'rgba(76,175,80,0.2)'
-              }}></div>
-              <span style={{ fontSize: '14px', color: '#ccc' }}>Current Cell</span>
-            </div>
-            <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
-              <div style={{
-                width: '20px',
-                height: '20px',
-                borderRadius: 4,
-                border: '2px solid #a120ff',
-                background: 'rgba(161,32,255,0.2)'
-              }}></div>
-              <span style={{ fontSize: '14px', color: '#ccc' }}>Calculated</span>
-            </div>
-            <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
-              <div style={{
-                width: '20px',
-                height: '20px',
-                borderRadius: 4,
-                border: '2px solid #9c27b0',
-                background: 'rgba(156,39,176,0.3)'
-              }}></div>
-              <span style={{ fontSize: '14px', color: '#ccc' }}>Destination</span>
-            </div>
+            <LegendItem
+              color={THEME.colors.warning}
+              backgroundColor={THEME.backgrounds.warning}
+              label="Base Case"
+            />
+            <LegendItem
+              color={THEME.colors.success}
+              backgroundColor={THEME.backgrounds.success}
+              label="Current Cell"
+            />
+            <LegendItem
+              color={THEME.colors.primary}
+              backgroundColor={THEME.backgrounds.primary}
+              label="Calculated"
+            />
+            <LegendItem
+              color={THEME.colors.purple}
+              backgroundColor={THEME.backgrounds.purple}
+              label="Destination"
+            />
           </div>
         </div>
 
-        
         <div style={{
           display: 'flex',
           justifyContent: 'center',
           gap: '1rem'
         }}>
           <button
-            onClick={() => {
-              const prev = Math.max(0, step - 1);
-              setStep(prev);
-              if (onStepChange) onStepChange(prev + 1);
-            }}
-            disabled={step === 0}
+            onClick={handlePrevious}
+            disabled={isPreviousDisabled}
             style={{
               padding: '0.75rem 1.5rem',
               borderRadius: 8,
               border: 'none',
-              background: step === 0 ? 'rgba(255,255,255,0.1)' : '#6c757d',
-              color: '#fff',
+              background: isPreviousDisabled ? THEME.backgrounds.disabled : THEME.colors.secondary,
+              color: THEME.colors.light,
               fontWeight: 600,
               fontSize: '14px',
-              cursor: step === 0 ? 'not-allowed' : 'pointer',
-              opacity: step === 0 ? 0.5 : 1
+              cursor: isPreviousDisabled ? 'not-allowed' : 'pointer',
+              opacity: isPreviousDisabled ? 0.5 : 1
             }}
           >
             ← Previous
           </button>
 
           <button
-            onClick={() => {
-              if (step < maxSteps - 1) {
-                const next = step + 1;
-                setStep(next);
-                if (onStepChange) onStepChange(next + 1);
-              } else {
-                setStep(0);
-                if (onReset) onReset();
-                if (onStepChange) onStepChange(1);
-              }
-            }}
+            onClick={handleNext}
             style={{
               padding: '0.75rem 1.5rem',
               borderRadius: 8,
               border: 'none',
-              background: step >= maxSteps - 1 ? '#dc3545' : '#a120ff',
-              color: '#fff',
+              background: isLastStep ? THEME.colors.danger : THEME.colors.primary,
+              color: THEME.colors.light,
               fontWeight: 600,
               fontSize: '14px',
               cursor: 'pointer',
-              boxShadow: '0 2px 8px rgba(161,32,255,0.3)'
+              boxShadow: `0 2px 8px ${THEME.effects.shadow}`
             }}
           >
-            {step >= maxSteps - 1 ? 'Reset' : 'Next →'}
+            {isLastStep ? 'Reset' : 'Next →'}
           </button>
         </div>
       </div>
     </div>
   );
-}
+};
+
 export default TwoDDpVisualization;
