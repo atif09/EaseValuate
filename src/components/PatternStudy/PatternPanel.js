@@ -5,13 +5,14 @@ import VisualizationPanel from './VisualizationPanel';
 import {panelContainerStyle,leftPanelStyle,rightPanelStyle} from '../../styles/patternPanelStyles';
 import patternList from './patternList';
 
-
 import slidingWindowStepDescriptions from './PatternPanels/StepDescriptions/SlidingWindowStepDescriptions';
 import slidingWindowLineMaps from './PatternPanels/LineMaps/SlidingWindowLineMaps';
 import twoPointersStepDescriptions from './PatternPanels/StepDescriptions/TwoPointersStepDescriptions';
 import twoPointersLineMaps from './PatternPanels/LineMaps/TwoPointersLineMaps';
 import subsetStepDescriptions from './PatternPanels/StepDescriptions/BacktrackingStepDescriptions';
 import subsetLineMaps from './PatternPanels/LineMaps/BacktrackingLineMaps';
+import topKElementsStepDescriptions from './PatternPanels/StepDescriptions/TopKElementsStepDescriptions';
+import topKElementsLineMaps from './PatternPanels/LineMaps/TopKElementsLineMaps';
 
 function PatternPanel() {
   const [highlightedLines, setHighlightedLines] = useState([]);
@@ -60,8 +61,19 @@ function PatternPanel() {
           ? { ...stepDesc, step, operation: stepMapping?.operation || 'unknown' }
           : null
       );
+    } else if (selectedPattern === 'Top K Elements (Heap)') {
+      const stepMapping = topKElementsLineMaps[selectedLanguage] && topKElementsLineMaps[selectedLanguage][step];
+      const stepDesc = topKElementsStepDescriptions[step];
+
+      setHighlightedLines(stepMapping ? stepMapping.lines : []);
+      setCurrentStepInfo(
+        stepDesc
+          ? { ...stepDesc, step, operation: stepMapping?.operation || 'unknown'}
+          : null
+      );
     }
   };
+
 
   const resetHighlighting = () => {
     setHighlightedLines([]);
@@ -71,54 +83,54 @@ function PatternPanel() {
 
   return (
     <div>
-      <div style={{
-        width: '100%',
-        display: 'flex',
-        justifyContent: 'center',
-        marginBottom: 24,
-        padding: '0 2rem'
-      }}>
-        <select
-          value={selectedLanguage}
-          onChange={e => setSelectedLanguage(e.target.value)}
-          style={{
-            background: '#23243a',
-            color: '#fff',
-            border: '1px solid #a120ff',
-            borderRadius: 8,
-            padding: '0.5rem 1.2rem',
-            fontWeight: 600,
-            fontSize: 16,
-            outline: 'none',
-            boxShadow: '0 2px 8px rgba(161, 32, 255, 0.2)'
+          <div style={{
+            width: '100%',
+            display: 'flex',
+            justifyContent: 'center',
+            marginBottom: 24,
+            padding: '0 2rem'
           }}>
-          {languageOptions.map(opt => (
-            <option key={opt.value} value={opt.value}>{opt.label}</option>
-          ))}
-        </select>
-      </div>
+            <select
+              value={selectedLanguage}
+              onChange={e => setSelectedLanguage(e.target.value)}
+              style={{
+                background: '#23243a',
+                color: '#fff',
+                border: '1px solid #a120ff',
+                borderRadius: 8,
+                padding: '0.5rem 1.2rem',
+                fontWeight: 600,
+                fontSize: 16,
+                outline: 'none',
+                boxShadow: '0 2px 8px rgba(161, 32, 255, 0.2)'
+              }}>
+              {languageOptions.map(opt => (
+                <option key={opt.value} value={opt.value}>{opt.label}</option>
+              ))}
+            </select>
+          </div>
 
-      <div style={{ display: 'flex', gap: '2rem', padding: '0 1rem' }}>
-        <div style={{ flex: 1, minWidth: 0 }}>
-          <BoilerplateTabs
-            patternName={selectedPattern}
-            highlightedLines={highlightedLines}
-            selectedLanguage={selectedLanguage}
-            currentStepInfo={currentStepInfo}
-          />
+          <div style={{ display: 'flex', gap: '2rem', padding: '0 1rem' }}>
+            <div style={{ flex: 1, minWidth: 0 }}>
+              <BoilerplateTabs
+                patternName={selectedPattern}
+                highlightedLines={highlightedLines}
+                selectedLanguage={selectedLanguage}
+                currentStepInfo={currentStepInfo}
+              />
+            </div>
+            <div style={{ flex: 1, minWidth: 0 }}>
+              <VisualizationPanel
+                patternName={selectedPattern}
+                onStepChange={handleStepChange}
+                onReset={resetHighlighting}
+                selectedLanguage={selectedLanguage}
+                currentStepInfo={currentStepInfo}
+              />
+            </div>
+          </div>
         </div>
-        <div style={{ flex: 1, minWidth: 0 }}>
-          <VisualizationPanel
-            patternName={selectedPattern}
-            onStepChange={handleStepChange}
-            onReset={resetHighlighting}
-            selectedLanguage={selectedLanguage}
-            currentStepInfo={currentStepInfo}
-          />
-        </div>
-      </div>
-    </div>
-  );
-}
+      );
+    }
 
-export default PatternPanel;
+    export default PatternPanel;    
