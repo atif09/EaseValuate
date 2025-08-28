@@ -22,7 +22,7 @@ import greedyAlgorithmsStepDescriptions from './PatternPanels/StepDescriptions/G
 import fastAndSlowStepDescriptions from './PatternPanels/StepDescriptions/FastAndSlowStepDescriptions';
 import oneDimensionalDPStepDescriptions from './PatternPanels/StepDescriptions/OneDimensionalDPStepDescriptions';
 import cyclicSortStepDescriptions from './PatternPanels/StepDescriptions/CyclicSortStepDescriptions';
-
+import bitManipulationStepDescriptions from './PatternPanels/StepDescriptions/BitManipulationStepDescriptions';
 
 import twoPointersLineMaps from './PatternPanels/LineMaps/TwoPointersLineMaps';
 import subsetLineMaps from './PatternPanels/LineMaps/BacktrackingLineMaps';
@@ -38,7 +38,7 @@ import greedyAlgorithmsLineMaps from './PatternPanels/LineMaps/GreedyAlgorithmsL
 import fastAndSlowLineMaps from './PatternPanels/LineMaps/FastAndSlowLineMaps';
 import oneDimensionalDPLineMaps from './PatternPanels/LineMaps/OneDimensionalDPLineMaps';
 import cyclicSortLineMaps from './PatternPanels/LineMaps/CyclicSortLineMaps';
-
+import bitManipulationLineMaps from './PatternPanels/LineMaps/BitManipulationLineMaps';
 
 function PatternPanel() {
   const [highlightedLines, setHighlightedLines] = useState([]);
@@ -200,6 +200,16 @@ function PatternPanel() {
     } else if (selectedPattern === 'Cyclic Sort') {
       const stepMapping = cyclicSortLineMaps[selectedLanguage] && cyclicSortLineMaps[selectedLanguage][step];
       const stepDesc = cyclicSortStepDescriptions[step];
+
+      setHighlightedLines(stepMapping ? stepMapping.lines : []);
+      setCurrentStepInfo(
+        stepDesc
+          ? { ...stepDesc, step, operation: stepMapping?.operation || 'unknown'}
+          : null
+      );
+    } else if (selectedPattern === 'Bit Manipulation') {
+      const stepMapping = bitManipulationLineMaps[selectedLanguage] && bitManipulationLineMaps[selectedLanguage][step];
+      const stepDesc = bitManipulationStepDescriptions[step];
 
       setHighlightedLines(stepMapping ? stepMapping.lines : []);
       setCurrentStepInfo(
