@@ -21,6 +21,8 @@ import inorderTraversalStepDescriptions from './PatternPanels/StepDescriptions/I
 import greedyAlgorithmsStepDescriptions from './PatternPanels/StepDescriptions/GreedyAlgorithmsStepDescriptions';
 import fastAndSlowStepDescriptions from './PatternPanels/StepDescriptions/FastAndSlowStepDescriptions';
 import oneDimensionalDPStepDescriptions from './PatternPanels/StepDescriptions/OneDimensionalDPStepDescriptions';
+import cyclicSortStepDescriptions from './PatternPanels/StepDescriptions/CyclicSortStepDescriptions';
+
 
 import twoPointersLineMaps from './PatternPanels/LineMaps/TwoPointersLineMaps';
 import subsetLineMaps from './PatternPanels/LineMaps/BacktrackingLineMaps';
@@ -35,6 +37,8 @@ import inorderTraversalLineMaps from './PatternPanels/LineMaps/InorderTravLineMa
 import greedyAlgorithmsLineMaps from './PatternPanels/LineMaps/GreedyAlgorithmsLineMaps';
 import fastAndSlowLineMaps from './PatternPanels/LineMaps/FastAndSlowLineMaps';
 import oneDimensionalDPLineMaps from './PatternPanels/LineMaps/OneDimensionalDPLineMaps';
+import cyclicSortLineMaps from './PatternPanels/LineMaps/CyclicSortLineMaps';
+
 
 function PatternPanel() {
   const [highlightedLines, setHighlightedLines] = useState([]);
@@ -186,6 +190,16 @@ function PatternPanel() {
     } else if (selectedPattern === '1-Dimension DP') {
       const stepMapping = oneDimensionalDPLineMaps[selectedLanguage] && oneDimensionalDPLineMaps[selectedLanguage][step];
       const stepDesc = oneDimensionalDPStepDescriptions[step];
+
+      setHighlightedLines(stepMapping ? stepMapping.lines : []);
+      setCurrentStepInfo(
+        stepDesc
+          ? { ...stepDesc, step, operation: stepMapping?.operation || 'unknown'}
+          : null
+      );
+    } else if (selectedPattern === 'Cyclic Sort') {
+      const stepMapping = cyclicSortLineMaps[selectedLanguage] && cyclicSortLineMaps[selectedLanguage][step];
+      const stepDesc = cyclicSortStepDescriptions[step];
 
       setHighlightedLines(stepMapping ? stepMapping.lines : []);
       setCurrentStepInfo(
