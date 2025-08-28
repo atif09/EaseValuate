@@ -5,19 +5,22 @@ import VisualizationPanel from './VisualizationPanel';
 import {panelContainerStyle,leftPanelStyle,rightPanelStyle} from '../../styles/patternPanelStyles';
 import patternList from './patternList';
 
-//step desc 
+
 import slidingWindowStepDescriptions from './PatternPanels/StepDescriptions/SlidingWindowStepDescriptions';
 import twoPointersStepDescriptions from './PatternPanels/StepDescriptions/TwoPointersStepDescriptions';
 import subsetStepDescriptions from './PatternPanels/StepDescriptions/BacktrackingStepDescriptions';
 import slidingWindowLineMaps from './PatternPanels/LineMaps/SlidingWindowLineMaps';
 import topKElementsStepDescriptions from './PatternPanels/StepDescriptions/TopKElementsStepDescriptions';
 import twoDimensionalDPStepDescriptions from './PatternPanels/StepDescriptions/TwoDimensionalDPStepDescriptions';
+import preorderTravStepDescriptions from './PatternPanels/StepDescriptions/PreorderTravStepDescriptions';
 
-//linemapping
+
 import twoPointersLineMaps from './PatternPanels/LineMaps/TwoPointersLineMaps';
 import subsetLineMaps from './PatternPanels/LineMaps/BacktrackingLineMaps';
 import topKElementsLineMaps from './PatternPanels/LineMaps/TopKElementsLineMaps';
 import twoDimensionalDPLineMaps from './PatternPanels/LineMaps/TwoDimensionalDPLineMaps';
+import preorderTravLineMaps from './PatternPanels/LineMaps/PreorderTravLineMaps';
+
 
 function PatternPanel() {
   const [highlightedLines, setHighlightedLines] = useState([]);
@@ -79,6 +82,16 @@ function PatternPanel() {
     } else if (selectedPattern === '2-Dimension DP') {
       const stepMapping = twoDimensionalDPLineMaps[selectedLanguage] && twoDimensionalDPLineMaps[selectedLanguage][step];
       const stepDesc = twoDimensionalDPStepDescriptions[step];
+
+      setHighlightedLines(stepMapping ? stepMapping.lines : []);
+      setCurrentStepInfo(
+        stepDesc
+          ? { ...stepDesc, step, operation: stepMapping?.operation || 'unknown'}
+          : null
+      );
+    } else if (selectedPattern === 'Preorder Traversal (DFS)') {
+      const stepMapping = preorderTravLineMaps[selectedLanguage] && preorderTravLineMaps[selectedLanguage][step];
+      const stepDesc = preorderTravStepDescriptions[step];
 
       setHighlightedLines(stepMapping ? stepMapping.lines : []);
       setCurrentStepInfo(
