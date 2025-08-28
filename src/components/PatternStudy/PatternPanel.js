@@ -18,6 +18,7 @@ import mergeIntervalsStepDescriptions from './PatternPanels/StepDescriptions/Mer
 import kWayMergeStepDescriptions from './PatternPanels/StepDescriptions/KWayMergeStepDescriptions';
 import LLReversalStepDescriptions from './PatternPanels/StepDescriptions/LLReversalStepDescriptions';
 import inorderTraversalStepDescriptions from './PatternPanels/StepDescriptions/InorderTravStepDescriptions';
+import greedyAlgorithmsStepDescriptions from './PatternPanels/StepDescriptions/GreedyAlgorithmsStepDescriptions';
 
 import twoPointersLineMaps from './PatternPanels/LineMaps/TwoPointersLineMaps';
 import subsetLineMaps from './PatternPanels/LineMaps/BacktrackingLineMaps';
@@ -29,6 +30,7 @@ import mergeIntervalsLineMaps from './PatternPanels/LineMaps/MergeIntervalsLineM
 import kWayMergeLineMaps from './PatternPanels/LineMaps/KWayMergeLineMaps';
 import LLReversalLineMaps from './PatternPanels/LineMaps/LLReversalLineMaps';
 import inorderTraversalLineMaps from './PatternPanels/LineMaps/InorderTravLineMaps';
+import greedyAlgorithmsLineMaps from './PatternPanels/LineMaps/GreedyAlgorithmsLineMaps';
 
 function PatternPanel() {
   const [highlightedLines, setHighlightedLines] = useState([]);
@@ -150,6 +152,16 @@ function PatternPanel() {
     } else if (selectedPattern === 'Inorder Traversal (DFS)') {
       const stepMapping = inorderTraversalLineMaps[selectedLanguage] && inorderTraversalLineMaps[selectedLanguage][step];
       const stepDesc = inorderTraversalStepDescriptions[step];
+
+      setHighlightedLines(stepMapping ? stepMapping.lines : []);
+      setCurrentStepInfo(
+        stepDesc
+          ? { ...stepDesc, step, operation: stepMapping?.operation || 'unknown'}
+          : null
+      );
+    } else if (selectedPattern === 'Greedy Algorithms') {
+      const stepMapping = greedyAlgorithmsLineMaps[selectedLanguage] && greedyAlgorithmsLineMaps[selectedLanguage][step];
+      const stepDesc = greedyAlgorithmsStepDescriptions[step];
 
       setHighlightedLines(stepMapping ? stepMapping.lines : []);
       setCurrentStepInfo(
