@@ -1,5 +1,7 @@
 import React, {useState, useEffect, useRef, useLayoutEffect} from 'react';
 import subsetsTree, {nums, getStepInfo} from '../animations/subsetsTree';
+import subsetLineMaps from '../PatternPanels/LineMaps/BacktrackingLineMaps';
+import subsetStepDescriptions from '../PatternPanels/StepDescriptions/BacktrackingStepDescriptions';
 
 function BacktrackingVisualization({ onStepChange, onReset, currentStepInfo: _currentStepInfo }) {
   const [revealCount, setRevealCount] = useState(1);
@@ -229,7 +231,7 @@ function BacktrackingVisualization({ onStepChange, onReset, currentStepInfo: _cu
   const currentId = traversalOrder[revealCount - 1];
   const visibleIds = getVisibleNodeIds(subsetsTree, revealCount);
   const maxSteps = getTotalSteps();
-  const localStepInfo = getStepInfo(revealCount, getRevealedNodeIds(subsetsTree, revealCount), subsetsTree);
+  const localStepInfo = subsetStepDescriptions[revealCount] || getStepInfo(revealCount, getRevealedNodeIds(subsetsTree, revealCount), subsetsTree);
 
   function collectSubsets(tree, revealedIds, arr = []) {
     if (!tree || !revealedIds.includes(tree.id)) return arr;
@@ -281,7 +283,7 @@ function BacktrackingVisualization({ onStepChange, onReset, currentStepInfo: _cu
                      localStepInfo.operation === 'save' ? '#ffeb3b' :
                      localStepInfo.operation === 'start' ? '#a120ff' : '#a120ff'
             }}>
-              Step {localStepInfo.step}: {localStepInfo.title}
+              Step {revealCount}: {localStepInfo.title}
             </div>
             <div style={{ 
               fontSize: '14px', 

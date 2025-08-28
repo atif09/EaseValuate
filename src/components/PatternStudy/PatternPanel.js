@@ -44,6 +44,7 @@ import bitManipulationLineMaps from './PatternPanels/LineMaps/BitManipulationLin
 import binarySearchLineMaps from './PatternPanels/LineMaps/BinarySearchLineMaps';
 import bfsLineMaps from './PatternPanels/LineMaps/BfsLineMaps';
 
+
 function PatternPanel() {
   const [highlightedLines, setHighlightedLines] = useState([]);
   const [selectedLanguage, setSelectedLanguage] = useState('python');
