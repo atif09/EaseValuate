@@ -1,0 +1,61 @@
+const twoDimensionalDPLineMaps = {
+  python: {
+    1: { lines: [1], operation: "initialize" },
+    2: { lines: [4], operation: "setup" },
+    3: { lines: [5, 6], operation: "base_case_rows" },
+    4: { lines: [7, 8], operation: "base_case_cols" },
+    5: { lines: [9, 10, 11], operation: "calculating" },
+    6: { lines: [11], operation: "updating" },
+    7: { lines: [9, 10, 11], operation: "calculating" },
+    8: { lines: [11], operation: "updating" },
+    9: { lines: [9, 10, 11], operation: "calculating" },
+    10: { lines: [11], operation: "updating" },
+    11: { lines: [9, 10, 11], operation: "calculating" },
+    12: { lines: [11], operation: "updating" },
+    13: { lines: [9, 10, 11], operation: "calculating" },
+    14: { lines: [11], operation: "updating" },
+    15: { lines: [9, 10, 11], operation: "calculating" },
+    16: { lines: [11], operation: "updating" },
+    17: { lines: [12], operation: "complete" }
+  },
+  cpp: {
+    1: { lines: [1], operation: "initialize" },
+    2: { lines: [3], operation: "setup" },
+    3: { lines: [4, 5, 6], operation: "base_case_rows" },
+    4: { lines: [7, 8, 9], operation: "base_case_cols" },
+    5: { lines: [10, 11, 12], operation: "calculating" },
+    6: { lines: [12], operation: "updating" },
+    7: { lines: [10, 11, 12], operation: "calculating" },
+    8: { lines: [12], operation: "updating" },
+    9: { lines: [10, 11, 12], operation: "calculating" },
+    10: { lines: [12], operation: "updating" },
+    11: { lines: [10, 11, 12], operation: "calculating" },
+    12: { lines: [12], operation: "updating" },
+    13: { lines: [10, 11, 12], operation: "calculating" },
+    14: { lines: [12], operation: "updating" },
+    15: { lines: [10, 11, 12], operation: "calculating" },
+    16: { lines: [12], operation: "updating" },
+    17: { lines: [15], operation: "complete" }
+  },
+  java: {
+    1: { lines: [1], operation: "initialize" },
+    2: { lines: [3], operation: "setup" },
+    3: { lines: [4, 5, 6], operation: "base_case_rows" },
+    4: { lines: [7, 8, 9], operation: "base_case_cols" },
+    5: { lines: [10, 11, 12], operation: "calculating" },
+    6: { lines: [12], operation: "updating" },
+    7: { lines: [10, 11, 12], operation: "calculating" },
+    8: { lines: [12], operation: "updating" },
+    9: { lines: [10, 11, 12], operation: "calculating" },
+    10: { lines: [12], operation: "updating" },
+    11: { lines: [10, 11, 12], operation: "calculating" },
+    12: { lines: [12], operation: "updating" },
+    13: { lines: [10, 11, 12], operation: "calculating" },
+    14: { lines: [12], operation: "updating" },
+    15: { lines: [10, 11, 12], operation: "calculating" },
+    16: { lines: [12], operation: "updating" },
+    17: { lines: [15], operation: "complete" }
+  }
+};
+
+export default twoDimensionalDPLineMaps;
