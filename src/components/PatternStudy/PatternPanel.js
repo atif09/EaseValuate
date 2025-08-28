@@ -16,6 +16,8 @@ import preorderTravStepDescriptions from './PatternPanels/StepDescriptions/Preor
 import postorderTravStepDescriptions from './PatternPanels/StepDescriptions/PostorderTravStepDescriptions';
 import mergeIntervalsStepDescriptions from './PatternPanels/StepDescriptions/MergeIntervalsStepDescriptions';
 import kWayMergeStepDescriptions from './PatternPanels/StepDescriptions/KWayMergeStepDescriptions';
+import LLReversalStepDescriptions from './PatternPanels/StepDescriptions/LLReversalStepDescriptions';
+
 
 import twoPointersLineMaps from './PatternPanels/LineMaps/TwoPointersLineMaps';
 import subsetLineMaps from './PatternPanels/LineMaps/BacktrackingLineMaps';
@@ -25,6 +27,7 @@ import preorderTravLineMaps from './PatternPanels/LineMaps/PreorderTravLineMaps'
 import postorderTravLineMaps from './PatternPanels/LineMaps/PostorderTravLineMaps';
 import mergeIntervalsLineMaps from './PatternPanels/LineMaps/MergeIntervalsLineMaps';
 import kWayMergeLineMaps from './PatternPanels/LineMaps/KWayMergeLineMaps';
+import LLReversalLineMaps from './PatternPanels/LineMaps/LLReversalLineMaps';
 
 function PatternPanel() {
   const [highlightedLines, setHighlightedLines] = useState([]);
@@ -126,6 +129,16 @@ function PatternPanel() {
     } else if (selectedPattern === 'K-way Merge') {
       const stepMapping = kWayMergeLineMaps[selectedLanguage] && kWayMergeLineMaps[selectedLanguage][step];
       const stepDesc = kWayMergeStepDescriptions[step];
+
+      setHighlightedLines(stepMapping ? stepMapping.lines : []);
+      setCurrentStepInfo(
+        stepDesc
+          ? { ...stepDesc, step, operation: stepMapping?.operation || 'unknown'}
+          : null
+      );
+    } else if (selectedPattern === 'In-place Reversal of a Linked List') {
+      const stepMapping = LLReversalLineMaps[selectedLanguage] && LLReversalLineMaps[selectedLanguage][step];
+      const stepDesc = LLReversalStepDescriptions[step];
 
       setHighlightedLines(stepMapping ? stepMapping.lines : []);
       setCurrentStepInfo(
