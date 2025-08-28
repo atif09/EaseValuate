@@ -1,0 +1,56 @@
+const subsetLineMaps = {
+python: {
+    1: { lines: [2], operation: "start" },           
+    2: { lines: [5], operation: "include" },        
+    3: { lines: [5], operation: "include" },        
+    4: { lines: [5], operation: "include" },       
+    5: { lines: [3, 4], operation: "save" },         
+    6: { lines: [7, 9], operation: "backtrack_exclude" }, 
+    7: { lines: [3, 4], operation: "save" },         
+    8: { lines: [7, 9], operation: "backtrack_exclude" }, 
+    9: { lines: [5], operation: "include" },         
+    10: { lines: [3, 4], operation: "save" },        
+    11: { lines: [7, 9], operation: "backtrack_exclude" }, 
+    12: { lines: [3, 4], operation: "save" },        
+    13: { lines: [7, 9], operation: "backtrack_exclude" }, 
+    14: { lines: [5], operation: "include" },        
+    15: { lines: [5], operation: "include" },        
+    16: { lines: [3, 4], operation: "save" }         
+  },
+  cpp: {
+    1: { lines: [3], operation: "start" },          
+    2: { lines: [5], operation: "include" },         
+    3: { lines: [5], operation: "include" },         
+    4: { lines: [5], operation: "include" },        
+    5: { lines: [4, 5], operation: "save" },        
+    6: { lines: [9, 11], operation: "backtrack_exclude" }, 
+    7: { lines: [4, 5], operation: "save" },         
+    8: { lines: [9, 11], operation: "backtrack_exclude" }, 
+    9: { lines: [7], operation: "include" },        
+    10: { lines: [4, 5], operation: "save" },       
+    11: { lines: [9, 11], operation: "backtrack_exclude" }, 
+    12: { lines: [4, 5], operation: "save" },       
+    13: { lines: [9, 11], operation: "backtrack_exclude" }, 
+    14: { lines: [7], operation: "include" },       
+    16: { lines: [4, 5], operation: "save" }         
+  },
+  java: {
+    1: { lines: [3], operation: "start" },          
+    2: { lines: [7], operation: "include" },        
+    3: { lines: [7], operation: "include" },         
+    4: { lines: [7], operation: "include" },         
+    5: { lines: [4, 5], operation: "save" },         
+    6: { lines: [9, 11], operation: "backtrack_exclude" },
+    7: { lines: [4, 5], operation: "save" },         
+    8: { lines: [9, 11], operation: "backtrack_exclude" }, 
+    9: { lines: [7], operation: "include" },         
+    10: { lines: [4, 5], operation: "save" },        
+    11: { lines: [9, 11], operation: "backtrack_exclude" }, 
+    12: { lines: [4, 5], operation: "save" },        
+    13: { lines: [9, 11], operation: "backtrack_exclude" }, 
+    14: { lines: [7], operation: "include" },        
+    15: { lines: [7], operation: "include" },        
+    16: { lines: [4, 5], operation: "save" }         
+  }
+};
+export default subsetLineMaps;
