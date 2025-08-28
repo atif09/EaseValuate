@@ -27,7 +27,7 @@ const visualizationMap = {
   'Fast & Slow Pointers': FastSlowPointersVisualization,
   'Greedy Algorithms': GreedyVisualization,
   'Inorder Traversal (DFS)': InorderTraversalVisualization,
-  'K-Way Merge': KWayMergeVisualization,
+  'K-way Merge': KWayMergeVisualization,
   'In-place Reversal of a Linked List': LlReversalVisualization,
   'Merge Intervals': MergeIntervalsVisualization,
   '1-Dimension DP': OneDDpVisualization,
