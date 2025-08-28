@@ -24,6 +24,7 @@ import oneDimensionalDPStepDescriptions from './PatternPanels/StepDescriptions/O
 import cyclicSortStepDescriptions from './PatternPanels/StepDescriptions/CyclicSortStepDescriptions';
 import bitManipulationStepDescriptions from './PatternPanels/StepDescriptions/BitManipulationStepDescriptions';
 import binarySearchStepDescriptions from './PatternPanels/StepDescriptions/BinarySearchStepDescriptions';
+import bfsStepDescriptions from './PatternPanels/StepDescriptions/BfsStepDescriptions.';
 
 import twoPointersLineMaps from './PatternPanels/LineMaps/TwoPointersLineMaps';
 import subsetLineMaps from './PatternPanels/LineMaps/BacktrackingLineMaps';
@@ -41,6 +42,7 @@ import oneDimensionalDPLineMaps from './PatternPanels/LineMaps/OneDimensionalDPL
 import cyclicSortLineMaps from './PatternPanels/LineMaps/CyclicSortLineMaps';
 import bitManipulationLineMaps from './PatternPanels/LineMaps/BitManipulationLineMaps';
 import binarySearchLineMaps from './PatternPanels/LineMaps/BinarySearchLineMaps';
+import bfsLineMaps from './PatternPanels/LineMaps/BfsLineMaps';
 
 function PatternPanel() {
   const [highlightedLines, setHighlightedLines] = useState([]);
@@ -222,6 +224,16 @@ function PatternPanel() {
     } else if (selectedPattern === 'Binary Search') {
       const stepMapping = binarySearchLineMaps[selectedLanguage] && binarySearchLineMaps[selectedLanguage][step];
       const stepDesc = binarySearchStepDescriptions[step];
+
+      setHighlightedLines(stepMapping ? stepMapping.lines : []);
+      setCurrentStepInfo(
+        stepDesc
+          ? { ...stepDesc, step, operation: stepMapping?.operation || 'unknown'}
+          : null
+      );
+    } else if (selectedPattern === 'Breadth-First Search (BFS)') {
+      const stepMapping = bfsLineMaps[selectedLanguage] && bfsLineMaps[selectedLanguage][step];
+      const stepDesc = bfsStepDescriptions[step];
 
       setHighlightedLines(stepMapping ? stepMapping.lines : []);
       setCurrentStepInfo(
