@@ -19,6 +19,7 @@ import kWayMergeStepDescriptions from './PatternPanels/StepDescriptions/KWayMerg
 import LLReversalStepDescriptions from './PatternPanels/StepDescriptions/LLReversalStepDescriptions';
 import inorderTraversalStepDescriptions from './PatternPanels/StepDescriptions/InorderTravStepDescriptions';
 import greedyAlgorithmsStepDescriptions from './PatternPanels/StepDescriptions/GreedyAlgorithmsStepDescriptions';
+import fastAndSlowStepDescriptions from './PatternPanels/StepDescriptions/FastAndSlowStepDescriptions';
 
 import twoPointersLineMaps from './PatternPanels/LineMaps/TwoPointersLineMaps';
 import subsetLineMaps from './PatternPanels/LineMaps/BacktrackingLineMaps';
@@ -31,6 +32,7 @@ import kWayMergeLineMaps from './PatternPanels/LineMaps/KWayMergeLineMaps';
 import LLReversalLineMaps from './PatternPanels/LineMaps/LLReversalLineMaps';
 import inorderTraversalLineMaps from './PatternPanels/LineMaps/InorderTravLineMaps';
 import greedyAlgorithmsLineMaps from './PatternPanels/LineMaps/GreedyAlgorithmsLineMaps';
+import fastAndSlowLineMaps from './PatternPanels/LineMaps/FastAndSlowLineMaps';
 
 function PatternPanel() {
   const [highlightedLines, setHighlightedLines] = useState([]);
@@ -162,6 +164,16 @@ function PatternPanel() {
     } else if (selectedPattern === 'Greedy Algorithms') {
       const stepMapping = greedyAlgorithmsLineMaps[selectedLanguage] && greedyAlgorithmsLineMaps[selectedLanguage][step];
       const stepDesc = greedyAlgorithmsStepDescriptions[step];
+
+      setHighlightedLines(stepMapping ? stepMapping.lines : []);
+      setCurrentStepInfo(
+        stepDesc
+          ? { ...stepDesc, step, operation: stepMapping?.operation || 'unknown'}
+          : null
+      );
+    } else if (selectedPattern === 'Fast & Slow Pointers') {
+      const stepMapping = fastAndSlowLineMaps[selectedLanguage] && fastAndSlowLineMaps[selectedLanguage][step];
+      const stepDesc = fastAndSlowStepDescriptions[step];
 
       setHighlightedLines(stepMapping ? stepMapping.lines : []);
       setCurrentStepInfo(
