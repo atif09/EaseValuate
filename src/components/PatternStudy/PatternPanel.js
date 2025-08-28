@@ -13,14 +13,14 @@ import slidingWindowLineMaps from './PatternPanels/LineMaps/SlidingWindowLineMap
 import topKElementsStepDescriptions from './PatternPanels/StepDescriptions/TopKElementsStepDescriptions';
 import twoDimensionalDPStepDescriptions from './PatternPanels/StepDescriptions/TwoDimensionalDPStepDescriptions';
 import preorderTravStepDescriptions from './PatternPanels/StepDescriptions/PreorderTravStepDescriptions';
-
+import postorderTravStepDescriptions from './PatternPanels/StepDescriptions/PostorderTravStepDescriptions';
 
 import twoPointersLineMaps from './PatternPanels/LineMaps/TwoPointersLineMaps';
 import subsetLineMaps from './PatternPanels/LineMaps/BacktrackingLineMaps';
 import topKElementsLineMaps from './PatternPanels/LineMaps/TopKElementsLineMaps';
 import twoDimensionalDPLineMaps from './PatternPanels/LineMaps/TwoDimensionalDPLineMaps';
 import preorderTravLineMaps from './PatternPanels/LineMaps/PreorderTravLineMaps';
-
+import postorderTravLineMaps from './PatternPanels/LineMaps/PostorderTravLineMaps';
 
 function PatternPanel() {
   const [highlightedLines, setHighlightedLines] = useState([]);
@@ -99,8 +99,19 @@ function PatternPanel() {
           ? { ...stepDesc, step, operation: stepMapping?.operation || 'unknown'}
           : null
       );
+    } else if (selectedPattern === 'Postorder Traversal (DFS)') {
+      const stepMapping = postorderTravLineMaps[selectedLanguage] && postorderTravLineMaps[selectedLanguage][step];
+      const stepDesc = postorderTravStepDescriptions[step];
+
+      setHighlightedLines(stepMapping ? stepMapping.lines : []);
+      setCurrentStepInfo(
+        stepDesc
+          ? { ...stepDesc, step, operation: stepMapping?.operation || 'unknown'}
+          : null
+      );
     }
-}
+  };
+
   const resetHighlighting = () => {
     setHighlightedLines([]);
     setCurrentStep(0);
