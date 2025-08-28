@@ -14,6 +14,7 @@ import topKElementsStepDescriptions from './PatternPanels/StepDescriptions/TopKE
 import twoDimensionalDPStepDescriptions from './PatternPanels/StepDescriptions/TwoDimensionalDPStepDescriptions';
 import preorderTravStepDescriptions from './PatternPanels/StepDescriptions/PreorderTravStepDescriptions';
 import postorderTravStepDescriptions from './PatternPanels/StepDescriptions/PostorderTravStepDescriptions';
+import mergeIntervalsStepDescriptions from './PatternPanels/StepDescriptions/MergeIntervalsStepDescriptions';
 
 import twoPointersLineMaps from './PatternPanels/LineMaps/TwoPointersLineMaps';
 import subsetLineMaps from './PatternPanels/LineMaps/BacktrackingLineMaps';
@@ -21,6 +22,7 @@ import topKElementsLineMaps from './PatternPanels/LineMaps/TopKElementsLineMaps'
 import twoDimensionalDPLineMaps from './PatternPanels/LineMaps/TwoDimensionalDPLineMaps';
 import preorderTravLineMaps from './PatternPanels/LineMaps/PreorderTravLineMaps';
 import postorderTravLineMaps from './PatternPanels/LineMaps/PostorderTravLineMaps';
+import mergeIntervalsLineMaps from './PatternPanels/LineMaps/MergeIntervalsLineMaps';
 
 function PatternPanel() {
   const [highlightedLines, setHighlightedLines] = useState([]);
@@ -109,9 +111,18 @@ function PatternPanel() {
           ? { ...stepDesc, step, operation: stepMapping?.operation || 'unknown'}
           : null
       );
+    } else if (selectedPattern === 'Merge Intervals') {
+      const stepMapping = mergeIntervalsLineMaps[selectedLanguage] && mergeIntervalsLineMaps[selectedLanguage][step];
+      const stepDesc = mergeIntervalsStepDescriptions[step];
+
+      setHighlightedLines(stepMapping ? stepMapping.lines : []);
+      setCurrentStepInfo(
+        stepDesc
+          ? { ...stepDesc, step, operation: stepMapping?.operation || 'unknown'}
+          : null
+      );
     }
   };
-
   const resetHighlighting = () => {
     setHighlightedLines([]);
     setCurrentStep(0);
