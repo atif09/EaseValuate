@@ -1,33 +1,72 @@
-# EaseValuate
+# EaseValuate - Learn algorithms through animations
 
-EaseValuate is an interactive code evaluation platform that helps users write, preview, and debug code effortlessly.  
-It currently supports HTML, Python, and JavaScript with live preview and smart error handling, making it a practical tool for learning, experimenting, and rapid prototyping.
+[Live Demo](https://ease-valuate.vercel.app/) 
 
-This is currently **under progress** and will have a responsive design for other devices too. Currently it only works well on Laptops and Desktops. 
-
-But you can check out the progress so far :) (click on the hyperlink below)
-
-[Live on Vercel](https://ease-valuate.vercel.app/)
 ---
 
-## Features
+## Overview
 
-- Multi-Language Support – Write and test HTML, Python, and JavaScript in real-time.  
-- Live Preview – See instant updates as you type your code.  
-- Smart Error Handling –  
-  - Errors are flagged with a bug icon.  
-  - The icon gets an exclamation badge when an error is detected.  
-  - Hover over the icon to view detailed error messages.  
-- Clean & Intuitive UI – Minimalistic design for a smooth coding experience.  
+EaseValuate is an interactive DSA learning platform that combines algorithm visualization with hands-on coding practice.  Built with React.js and Framer Motion, it provides an engaging environment for learning data structures and algorithms through animations while practicing code in multiple languages.
+
+---
+
+## Key Features
+
+### Algorithm Visualizations
+- Built interactive DSA learning platform with **18 animated pattern visualizations** using **React.js** and **Framer Motion**
+- Smooth, step-by-step animations that help understand algorithm execution flow
+
+### Multi-Language Code Editor
+- Built **synchronized tri-language boilerplate system** (C++, Python, Java) with **real-time code highlighting** linked to animation steps
+- Developed **real-time multi-language code editor** (JavaScript, Python, HTML) with **live error feedback**
+- Instant syntax highlighting and error detection as you type
+
+### Secure Code Execution
+- Implemented secure code execution using **Web Workers** to run user JavaScript and Python safely in **isolated** browser environments
+- Ensures user code doesn't interfere with the main application thread
+
+---
+
+## Technologies
+
+**JavaScript, React.js, HTML/CSS, Framer Motion, Web Workers**
+
+---
+
+<details>
+<summary><b>Project Structure (Click to expand)</b></summary>
+
+```
+EaseValuate/
+├── public/
+├── src/
+│   ├── components/
+│   │   ├── CodeEditor/
+│   │   ├── Visualizations/
+│   │   ├── ErrorHandler/
+│   │   └── Preview/
+│   ├── workers/
+│   │   ├── javascriptWorker.js
+│   │   └── pythonWorker.js
+│   ├── utils/
+│   ├── App.js
+│   └── index.js
+├── package.json
+└── README.md
+```
+
+</details>
 
 ---
 
 ## Work in Progress
 
-EaseValuate is continuously evolving. Upcoming features include:  
+EaseValuate is continuously evolving. Current development includes:
 
-- DSA (Data Structures & Algorithms) visualization and practice modules.  
-- Machine Learning integration for intelligent code insights and recommendations.  
+- Expanding DSA visualization library with more algorithms
+- Enhanced multi-language support with additional boilerplate templates
+- Performance optimizations for complex algorithm animations
+- Responsive design for mobile and tablet devices
 
----
+
 
