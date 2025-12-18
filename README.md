@@ -31,34 +31,6 @@ EaseValuate is an interactive DSA learning platform that combines algorithm visu
 
 **JavaScript, React.js, HTML/CSS, Framer Motion, Web Workers**
 
----
-
-<details>
-<summary><b>Project Structure (Click to expand)</b></summary>
-
-```
-EaseValuate/
-├── public/
-├── src/
-│   ├── components/
-│   │   ├── CodeEditor/
-│   │   ├── Visualizations/
-│   │   ├── ErrorHandler/
-│   │   └── Preview/
-│   ├── workers/
-│   │   ├── javascriptWorker.js
-│   │   └── pythonWorker.js
-│   ├── utils/
-│   ├── App.js
-│   └── index.js
-├── package.json
-└── README.md
-```
-
-</details>
-
----
-
 ## Work in Progress
 
 EaseValuate is continuously evolving. Current development includes:
